@@ -22,7 +22,7 @@
 #include "main.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "trace.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -237,7 +237,9 @@ void HAL_HCD_MspInit(HCD_HandleTypeDef* hhcd)
   if(hhcd->Instance==USB_OTG_HS)
   {
   /* USER CODE BEGIN USB_OTG_HS_MspInit 0 */
-
+  __HAL_RCC_SYSCFG_CLK_ENABLE();
+  HAL_SYSCFG_SetOTGPHYDisconnectThreshold(SYSCFG_OTG_HS_PHY_DISCONNECT_5_9PERCENT);
+	HAL_SYSCFG_SetOTGPHYSquelchThreshold(SYSCFG_OTG_HS_PHY_SQUELCH_15PERCENT);
   /* USER CODE END USB_OTG_HS_MspInit 0 */
 
   /** Initializes the peripherals clock
@@ -278,8 +280,11 @@ void HAL_HCD_MspInit(HCD_HandleTypeDef* hhcd)
     /*Configuring the SYSCFG registers OTG_HS PHY*/
     /*OTG_HS PHY enable*/
       HAL_SYSCFG_EnableOTGPHY(SYSCFG_OTG_HS_PHY_ENABLE);
+    /* USB_OTG_HS interrupt Init */
+    HAL_NVIC_SetPriority(OTG_HS_IRQn, 14, 0);
+    HAL_NVIC_EnableIRQ(OTG_HS_IRQn);
   /* USER CODE BEGIN USB_OTG_HS_MspInit 1 */
-
+  trace_HCD(1);
   /* USER CODE END USB_OTG_HS_MspInit 1 */
   }
 
@@ -301,6 +306,9 @@ void HAL_HCD_MspDeInit(HCD_HandleTypeDef* hhcd)
     /* Peripheral clock disable */
     __HAL_RCC_USB_OTG_HS_CLK_DISABLE();
     __HAL_RCC_USBPHYC_CLK_DISABLE();
+
+    /* USB_OTG_HS interrupt DeInit */
+    HAL_NVIC_DisableIRQ(OTG_HS_IRQn);
   /* USER CODE BEGIN USB_OTG_HS_MspDeInit 1 */
 
   /* USER CODE END USB_OTG_HS_MspDeInit 1 */
