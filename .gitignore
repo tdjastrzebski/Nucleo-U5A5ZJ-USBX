@@ -1,0 +1,15 @@
+/BUILD
+/dump
+/__pycache__
+.cortex-debug.*
+/mbed-os
+debug.log
+/Debug
+*.state.json
+*.launch
+*.project.prefs
+.mxproject
+.project
+.cproject
+*.pdf
+*.launch

@@ -1,0 +1,173 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            // requires: npm install cppbuild -g
+            "label": "Build++",
+            "type": "shell",
+            "command": "cppbuild",
+            "args": [
+                "gcc",
+                "debug",
+                "-w",
+                "-d"
+            ],
+            "presentation": {
+                "clear": true
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            // Requires ST-LINK Utility (https://github.com/stlink-org/stlink)
+            "label": "Deploy (ST-Link)",
+            "type": "shell",
+            "command": "st-flash",
+            "args": [
+                "--reset",
+                //"--debug",
+                "--opt",
+                "write",
+                "'BUILD/debug/${workspaceRootFolderName}.bin'",
+                "0x08000000",
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "clear": true
+            },
+        },
+        {
+            "label": "Deploy (pyOCD debug)",
+            "type": "shell",
+            "command": "pyocd",
+            "args": [
+                "flash",
+                "BUILD/debug/${workspaceRootFolderName}.bin",
+                "--base-address",
+                "0x08000000",
+                "--target",
+                "STM32U5A5ZJTxQ",
+                "--connect",
+                "halt",
+                "--frequency",
+                "24m",
+                "--uid",
+                "003500463232510239353236"
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "clear": true
+            },
+        },
+        {
+            "label": "Deploy (OpenOCD debug)",
+            "type": "shell",
+            "command": "openocd",
+            "args": [
+                "-s",
+                "${env:OpenOCD}/scripts",
+                "-f",
+                "STM32U5x_STLink.cfg",
+                "-c program \"BUILD/debug/${workspaceRootFolderName}.elf\" verify reset exit"
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^(Info|Warn|Error) : (.*)$",
+                    "severity": 1,
+                    "message": 2,
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^xPack OpenOCD x86_64 Open On-Chip Debugger*",
+                    "endsPattern": "^shutdown command invoked",
+                }
+            },
+            "presentation": {
+                "clear": true,
+                //"close": true // causes terminal to close upon termination
+            },
+        },
+        {
+            "label": "Clean",
+            "type": "shell",
+            "command": "rm",
+            "args": [
+                "-rf",
+                "BUILD"
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "clear": true,
+                "close": true // causes terminal to close upon termination
+            },
+        },
+        {
+            // Requires: npm install -g @serialport/terminal
+            "label": "Serial terminal",
+            "type": "shell",
+            "command": "serialport-terminal",
+            "args": [
+                "-b",
+                "115200"
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "clear": true
+            },
+        },
+        {
+            "label": "Build and Deploy (pyOCD debug)",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Build++",
+                "Deploy (pyOCD debug)",
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        }
+    ]
+}

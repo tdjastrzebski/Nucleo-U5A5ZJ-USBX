@@ -1,0 +1,94 @@
+{
+    "version":"0.2.0",
+    "configurations": [
+        {
+            "name": "Debug (OpenOCD)",
+            "type":"cortex-debug",
+            "request": "launch",
+            "servertype":"openocd",
+            "showDevDebugOutput": "vscode",
+            "cwd": "${workspaceRoot}",
+            "executable": "BUILD/debug/${workspaceRootFolderName}.elf",
+            "svdFile": "STM32U5A9.svd",
+            "runToEntryPoint": "main",
+            "device": "STM32U5A5ZJTxQ",
+            "searchDir": ["${env:OpenOCD}/scripts"],
+            "serverArgs": [
+                "-c adapter serial 003500463232510239353236"
+            ],
+            "configFiles": [
+                "/interface/stlink.cfg",
+                "/target/stm32u5x.cfg",
+            ],
+            "interface": "swd",
+            "swoConfig": {
+                "enabled": true,
+                "cpuFrequency": 180000000,
+                "swoFrequency": 2000000,
+                "source": "probe",
+                "decoders": [
+                    { "type": "console", "label": "ITM", "port": 0 }
+                ]
+            },
+            //"debugServer": 4711
+        },
+        {
+            "name": "Debug (OpenOCD J)",
+            "type":"cortex-debug",
+            "request": "launch",
+            "servertype":"openocd",
+            "cwd": "${workspaceRoot}",
+            "executable": "BUILD/debug/${workspaceRootFolderName}.elf",
+            "svdFile": "STM32U5A9.svd",
+            "runToEntryPoint": "main",
+            "device": "STM32U5A5ZJTxQ",
+            "searchDir": ["${env:OpenOCD}/scripts"],
+            "configFiles": [
+                "/interface/jlink.cfg",
+                "/target/stm32u5x.cfg",
+            ],
+            "interface": "swd",
+            "swoConfig": {
+                "enabled": true,
+                "cpuFrequency": 8000000,
+                "swoFrequency": 2000000,
+                "source": "probe",
+                "decoders": [
+                    { "type": "console", "label": "ITM", "port": 0 }
+                ]
+            }
+        },
+        {
+            "name": "Debug (ST-Util)",
+            "type": "cortex-debug",
+            "request": "launch",
+            "servertype": "stutil",
+            "cwd": "${workspaceRoot}",
+            "executable": "BUILD/debug/${workspaceRootFolderName}.elf",
+            "svdFile": "STM32U5A9.svd",
+            "device": "STM32U5A5ZJTxQ",
+            "runToEntryPoint": "main",
+            "v1": false,
+            "interface": "swd",
+            //"debugServer": 4711,
+        },
+        {
+            "name": "Debug (pyOCD)",
+            "type": "cortex-debug",
+            "request": "launch",
+            "servertype":"pyocd",
+            "showDevDebugOutput": "both",
+            "cwd": "${workspaceRoot}",
+            "executable": "BUILD/debug/${workspaceRootFolderName}.elf",
+            "device": "STM32U5A5ZJTxQ",
+            "targetId": "STM32U5A5ZJTxQ",
+            "svdFile": "STM32U5A9.svd",
+            "runToEntryPoint": "main",
+            "interface": "swd",
+            "serverArgs": [
+                "--uid",
+                "003500463232510239353236"
+            ]
+        }
+    ]
+}
