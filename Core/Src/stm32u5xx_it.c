@@ -21,6 +21,7 @@
 #include "main.h"
 #include "stm32u5xx_it.h"
 #include "terminal_colors.h"
+#include <stdio.h>
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */
