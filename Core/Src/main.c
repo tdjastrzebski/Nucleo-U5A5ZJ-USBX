@@ -24,6 +24,7 @@
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
 #include "terminal_colors.h"
+#include "trace.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -127,7 +128,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USB_OTG_HS_HCD_Init();
   /* USER CODE BEGIN 2 */
-  printf(YELLOW_BG("restarted") "\n");
+  //printf(YELLOW_BG("restarted") "\n");
   /* USER CODE END 2 */
 
   MX_ThreadX_Init();
@@ -452,7 +453,8 @@ static void MX_USB_OTG_HS_HCD_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN USB_OTG_HS_Init 2 */
-
+  HAL_HCD_Start(&hhcd_USB_OTG_HS);
+  trace_HCD(1);
   /* USER CODE END USB_OTG_HS_Init 2 */
 
 }

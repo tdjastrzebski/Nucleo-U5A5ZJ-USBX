@@ -284,8 +284,8 @@ void HAL_HCD_MspInit(HCD_HandleTypeDef* hhcd)
     HAL_NVIC_SetPriority(OTG_HS_IRQn, 14, 0);
     HAL_NVIC_EnableIRQ(OTG_HS_IRQn);
   /* USER CODE BEGIN USB_OTG_HS_MspInit 1 */
-  HAL_HCD_Start(hhcd);
-  trace_HCD(1);
+
+  //trace_HCD(1);
   /* USER CODE END USB_OTG_HS_MspInit 1 */
   }
 
