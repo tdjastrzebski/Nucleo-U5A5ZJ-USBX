@@ -78,7 +78,7 @@ void NMI_Handler(void)
   /* USER CODE BEGIN NonMaskableInt_IRQn 1 */
 		const uint32_t pattern = 0x80008000;
 		static uint32_t shift = 0;
-		HAL_GPIO_WritePin(LED_RED_Pin, LED_RED_GPIO_Port, (pattern >> shift) & 0x1 ? GPIO_PIN_SET : GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, (pattern >> shift) & 0x1 ? GPIO_PIN_SET : GPIO_PIN_RESET);
 		shift++;
 		shift = shift % 32;
 		HAL_Delay(200);
@@ -98,7 +98,7 @@ void HardFault_Handler(void)
     /* USER CODE BEGIN W1_HardFault_IRQn 0 */
 		const uint32_t pattern = 0xa000a000;
 		static uint32_t shift = 0;
-		HAL_GPIO_WritePin(LED_RED_Pin, LED_RED_GPIO_Port, (pattern >> shift) & 0x1 ? GPIO_PIN_SET : GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, (pattern >> shift) & 0x1 ? GPIO_PIN_SET : GPIO_PIN_RESET);
 		shift++;
 		shift = shift % 32;
 		HAL_Delay(200);
@@ -119,7 +119,7 @@ void MemManage_Handler(void)
     /* USER CODE BEGIN W1_MemoryManagement_IRQn 0 */
 		const uint32_t pattern = 0xa800a800;
 		static uint32_t shift = 0;
-		HAL_GPIO_WritePin(LED_RED_Pin, LED_RED_GPIO_Port, (pattern >> shift) & 0x1 ? GPIO_PIN_SET : GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, (pattern >> shift) & 0x1 ? GPIO_PIN_SET : GPIO_PIN_RESET);
 		shift++;
 		shift = shift % 32;
 		HAL_Delay(200);
@@ -140,7 +140,7 @@ void BusFault_Handler(void)
     /* USER CODE BEGIN W1_BusFault_IRQn 0 */
 		const uint32_t pattern = 0xaa00aa00;
 		static uint32_t shift = 0;
-		HAL_GPIO_WritePin(LED_RED_Pin, LED_RED_GPIO_Port, (pattern >> shift) & 0x1 ? GPIO_PIN_SET : GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, (pattern >> shift) & 0x1 ? GPIO_PIN_SET : GPIO_PIN_RESET);
 		shift++;
 		shift = shift % 32;
 		HAL_Delay(200);
@@ -161,7 +161,7 @@ void UsageFault_Handler(void)
     /* USER CODE BEGIN W1_UsageFault_IRQn 0 */
 		const uint32_t pattern = 0xaa80aa80;
 		static uint32_t shift = 0;
-		HAL_GPIO_WritePin(LED_RED_Pin, LED_RED_GPIO_Port, (pattern >> shift) & 0x1 ? GPIO_PIN_SET : GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, (pattern >> shift) & 0x1 ? GPIO_PIN_SET : GPIO_PIN_RESET);
 		shift++;
 		shift = shift % 32;
 		HAL_Delay(200);
