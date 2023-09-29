@@ -22,6 +22,16 @@ static void _trace(uint8_t level, const char* format_msg, ...) {
 }
 
 void trace_HCD(uint8_t level) {
+	// 11.8.30 RCC AHB2 peripheral clock enable register 1 (RCC_AHB2ENR1)
+	trace(level, "[RCC.AHB2ENR1] OTGEN OTGHSPHYEN\n");
+	trace(level, "               %s    %s\n",
+	      GET_REG_FLAGX(RCC->AHB2ENR1, RCC_AHB2ENR1_OTGEN), GET_REG_FLAGX(RCC->AHB2ENR1, RCC_AHB2ENR1_USBPHYCEN));
+
+	// 11.8.7 RCC clock configuration register 2 (RCC_CFGR2)
+	trace(level, "[RCC.CFGR2] AHB2DIS1\n");
+	trace(level, "            %s\n",
+	      GET_REG_FLAGX(RCC->CFGR2, RCC_CFGR2_AHB2DIS1));
+
 	// 15.3.12 SYSCFG OTG_HS PHY register (SYSCFG_OTGHSPHYCR)
 	trace(level, "[OTGHSPHYCR] CLKSEL PDCTRL EN\n");
 	trace(level, "             %i%i%i%i   %s     %s\n",
