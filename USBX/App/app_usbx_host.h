@@ -28,9 +28,11 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "ux_api.h"
 #include "main.h"
+#include "ux_host_msc.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "ux_hcd_stm32.h"
+#include "ux_host_msc.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -67,7 +69,12 @@ VOID USBX_APP_Host_Init(VOID);
 
 /* Private defines -----------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+typedef enum
+{
+  NONE_USB_HOST = 0,
+  STOP_USB_HOST = 1,
+  START_USB_HOST,
+} USB_MODE_STATE;
 /* USER CODE END PD */
 
 #ifndef UX_HOST_APP_THREAD_NAME

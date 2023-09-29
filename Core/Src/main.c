@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include "terminal_colors.h"
 #include "trace.h"
+#include "app_usbx_host.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -68,9 +69,30 @@ static void MX_USART1_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+extern TX_QUEUE ux_app_MsgQueue_UCPD;
+#if defined(__ICCARM__) /* IAR Compiler */
+#pragma data_alignment = 4
+#endif /* defined ( __ICCARM__ ) */
+__ALIGN_BEGIN USB_MODE_STATE USB_Device_EVENT __ALIGN_END = NONE_USB_HOST;
+
 void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin) {
 	if (GPIO_Pin == USER_BUTTON_Pin) {
-		printf(YELLOW("* USER_BUTTON *") "\n");
+		static uint8_t state = 0;
+    if (state == 0) {
+      state = 1;
+      printf(YELLOW("* device connected *") "\n");
+			USB_Device_EVENT = START_USB_HOST;
+			if (tx_queue_send(&ux_app_MsgQueue_UCPD, &USB_Device_EVENT, TX_NO_WAIT) != TX_SUCCESS) {
+				Error_Handler();
+			}
+    } else {
+      state = 0;
+      printf(YELLOW("* device disconnected *") "\n");
+			USB_Device_EVENT = STOP_USB_HOST;
+			if (tx_queue_send(&ux_app_MsgQueue_UCPD, &USB_Device_EVENT, TX_NO_WAIT) != TX_SUCCESS) {
+				Error_Handler();
+			}
+    }
 	}
 }
 

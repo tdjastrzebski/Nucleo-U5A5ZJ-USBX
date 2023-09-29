@@ -56,6 +56,14 @@ static void blinkLed(ULONG data);
 __ALIGN_BEGIN static UCHAR tx_byte_pool_buffer[TX_APP_MEM_POOL_SIZE] __ALIGN_END;
 static TX_BYTE_POOL tx_app_byte_pool;
 
+/* USER CODE BEGIN FX_Pool_Buffer */
+/* USER CODE END FX_Pool_Buffer */
+#if defined ( __ICCARM__ )
+#pragma data_alignment=4
+#endif
+__ALIGN_BEGIN static UCHAR  fx_byte_pool_buffer[FX_APP_MEM_POOL_SIZE] __ALIGN_END;
+static TX_BYTE_POOL FILEX_MEM_POOL_VAR_NAME;
+
 /* USER CODE BEGIN UX_HOST_Pool_Buffer */
 /* USER CODE END UX_HOST_Pool_Buffer */
 #if defined ( __ICCARM__ )
@@ -119,6 +127,32 @@ VOID tx_application_define(VOID *first_unused_memory)
 
     /* USER CODE END  App_ThreadX_Init_Success */
 
+  }
+  if (tx_byte_pool_create(&FILEX_MEM_POOL_VAR_NAME, "Fx App memory pool", fx_byte_pool_buffer, FX_APP_MEM_POOL_SIZE) != TX_SUCCESS)
+  {
+    /* USER CODE BEGIN FX_Byte_Pool_Error */
+
+    /* USER CODE END FX_Byte_Pool_Error */
+  }
+  else
+  {
+    /* USER CODE BEGIN FX_Byte_Pool_Success */
+
+    /* USER CODE END FX_Byte_Pool_Success */
+
+    memory_ptr = (VOID *)&FILEX_MEM_POOL_VAR_NAME;
+    status = MX_FileX_Init(memory_ptr);
+    if (status != FX_SUCCESS)
+    {
+      /* USER CODE BEGIN  MX_FileX_Init_Error */
+      while(1)
+      {
+      }
+      /* USER CODE END  MX_FileX_Init_Error */
+    }
+    /* USER CODE BEGIN  MX_FileX_Init_Success */
+
+    /* USER CODE END  MX_FileX_Init_Success */
   }
 
   if (tx_byte_pool_create(&ux_host_app_byte_pool, "Ux App memory pool", ux_host_byte_pool_buffer, UX_HOST_APP_MEM_POOL_SIZE) != TX_SUCCESS)
