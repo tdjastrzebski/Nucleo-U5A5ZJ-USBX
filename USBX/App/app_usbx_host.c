@@ -23,7 +23,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "trace.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -134,6 +134,8 @@ static VOID app_ux_host_thread_entry(ULONG thread_input)
 {
   /* USER CODE BEGIN app_ux_host_thread_entry */
   TX_PARAMETER_NOT_USED(thread_input);
+  USBX_APP_Host_Init();
+
   /* USER CODE END app_ux_host_thread_entry */
 }
 
@@ -252,5 +254,31 @@ VOID ux_host_error_callback(UINT system_level, UINT system_context, UINT error_c
 }
 
 /* USER CODE BEGIN 1 */
+VOID USBX_APP_Host_Init(VOID)
+{
+  /* USER CODE BEGIN USB_Host_Init_PreTreatment_0 */
 
+  /* USER CODE END USB_Host_Init_PreTreatment_0 */
+
+  /* Initialize the LL driver */
+  MX_USB_OTG_HS_HCD_Init();
+
+  /* Initialize the host controller driver */
+  ux_host_stack_hcd_register(_ux_system_host_hcd_stm32_name, _ux_hcd_stm32_initialize, (ULONG)USB_OTG_HS, (ULONG)&hhcd_USB_OTG_HS);
+
+  /* Enable USB Global Interrupt*/
+  HAL_HCD_Start(&hhcd_USB_OTG_HS);
+
+  /* USER CODE BEGIN USB_Host_Init_PostTreatment1 */
+
+  /* Start Application Message */
+  USBH_UsrLog("**** USB OTG HS MSC Host ****\n");
+  USBH_UsrLog("USB Host library started.\n");
+
+  /* Wait for Device to be attached */
+  USBH_UsrLog("Connect your MSC Device");
+  
+  trace_HCD(1);
+  /* USER CODE END USB_Host_Init_PostTreatment1 */
+}
 /* USER CODE END 1 */

@@ -49,6 +49,7 @@ extern "C" {
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
 void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin);
+extern HCD_HandleTypeDef hhcd_USB_OTG_HS;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
@@ -63,6 +64,7 @@ void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin);
 
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
+void MX_USB_OTG_HS_HCD_Init(void);
 
 /* USER CODE BEGIN EFP */
 

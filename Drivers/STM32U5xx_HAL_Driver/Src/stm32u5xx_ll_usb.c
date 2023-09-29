@@ -1537,14 +1537,11 @@ HAL_StatusTypeDef USB_HostInit(USB_OTG_GlobalTypeDef *USBx, USB_OTG_CfgTypeDef c
     USBx->GINTMSK |= USB_OTG_GINTMSK_RXFLVLM;
   }
 
-  SET_BIT(USBx->GAHBCFG, USB_OTG_GAHBCFG_GINT);
   /* Enable interrupts matching to the Host mode ONLY */
-  USBx->GINTMSK |= (USB_OTG_GINTMSK_PRTIM         | USB_OTG_GINTMSK_HCIM | \
-                  USB_OTG_GINTMSK_SOFM            | USB_OTG_GINTSTS_DISCINT | \
-                  USB_OTG_GINTMSK_PXFRM_IISOOXFRM | USB_OTG_GINTMSK_WUIM);
-  
-  uint32_t gintmsk = USBx->GINTMSK;
-  
+  USBx->GINTMSK |= (USB_OTG_GINTMSK_PRTIM            | USB_OTG_GINTMSK_HCIM | \
+                    USB_OTG_GINTMSK_SOFM             | USB_OTG_GINTSTS_DISCINT | \
+                    USB_OTG_GINTMSK_PXFRM_IISOOXFRM  | USB_OTG_GINTMSK_WUIM);
+
   return ret;
 }
 
