@@ -304,7 +304,7 @@ UINT ux_host_event_callback(ULONG event, UX_HOST_CLASS *current_class, VOID *cur
     default:
 
       /* USER CODE BEGIN EVENT_DEFAULT */
-      printf(CYAN("* UX_DEVICE unhandled event *") "\n");
+      printf(CYAN("* UX_DEVICE unhandled event code: %li *") "\n", event);
       /* USER CODE END EVENT_DEFAULT */
 
       break;
@@ -353,7 +353,7 @@ VOID ux_host_error_callback(UINT system_level, UINT system_context, UINT error_c
     default:
 
       /* USER CODE BEGIN ERROR_DEFAULT */
-      printf(CYAN("* UX unhandled error *") "\n");
+      printf(CYAN("* UX unhandled error code: %i *") "\n", error_code);
       /* USER CODE END ERROR_DEFAULT */
 
       break;
