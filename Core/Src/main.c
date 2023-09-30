@@ -78,6 +78,8 @@ __ALIGN_BEGIN USB_MODE_STATE USB_Device_EVENT __ALIGN_END = NONE_USB_HOST;
 void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin) {
 	if (GPIO_Pin == USER_BUTTON_Pin) {
 		static uint8_t state = 0;
+    trace_HCD(1);
+    
     if (state == 0) {
       state = 1;
       printf(YELLOW("* device connected *") "\n");
