@@ -129,7 +129,7 @@ void trace_HCD(uint8_t level) {
 	// look for HAL USBX_HPRT0 register definition, not part of any typedef
 	__IO uint32_t host_port = *(__IO uint32_t*)((uint32_t)USB_OTG_HS + USB_OTG_HOST_PORT_BASE);
 	trace(level, "[HPRT] PSPD PTCTL PPWR PLSTS PRST PSUSP PRES POCCHNG POCA PENCHNG PENA PCDET PCSTS\n");
-	trace(level, "       %i%i   %i%i%i%i   %s  %i%i   %s  %s   %s  %s     %s  %s     %s  %s   %s\n",
+	trace(level, "       %i%i   %i%i%i%i  %s   %i%i    %s   %s    %s   %s      %s   %s      %s   %s    %s\n",
 	      GET_REG_FIELD_BIT(host_port, USB_OTG_HPRT_PSPD, 1), GET_REG_FIELD_BIT(host_port, USB_OTG_HPRT_PSPD, 0),
 	      GET_REG_FIELD_BIT(host_port, USB_OTG_HPRT_PTCTL, 3), GET_REG_FIELD_BIT(host_port, USB_OTG_HPRT_PTCTL, 2), GET_REG_FIELD_BIT(host_port, USB_OTG_HPRT_PTCTL, 1), GET_REG_FIELD_BIT(host_port, USB_OTG_HPRT_PTCTL, 0),
 	      GET_REG_FLAGX(host_port, USB_OTG_HPRT_PPWR),

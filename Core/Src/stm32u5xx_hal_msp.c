@@ -253,7 +253,7 @@ void HAL_HCD_MspInit(HCD_HandleTypeDef* hhcd)
 
   /** Set the OTG PHY reference clock selection
   */
-    HAL_SYSCFG_SetOTGPHYReferenceClockSelection(SYSCFG_OTG_HS_PHY_CLK_SELECT_3);
+    HAL_SYSCFG_SetOTGPHYReferenceClockSelection(SYSCFG_OTG_HS_PHY_CLK_SELECT_1);
 
     /* Peripheral clock enable */
     __HAL_RCC_USB_OTG_HS_CLK_ENABLE();
