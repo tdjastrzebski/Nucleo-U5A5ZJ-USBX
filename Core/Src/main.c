@@ -60,7 +60,6 @@ static void SystemPower_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_ICACHE_Init(void);
-static void MX_MEMORYMAP_Init(void);
 static void MX_UCPD1_Init(void);
 static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
@@ -146,7 +145,6 @@ int main(void)
   MX_GPIO_Init();
   MX_ADC1_Init();
   MX_ICACHE_Init();
-  MX_MEMORYMAP_Init();
   MX_UCPD1_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
@@ -184,10 +182,16 @@ void SystemClock_Config(void)
     Error_Handler();
   }
 
+  /** Configure LSE Drive Capability
+  */
+  HAL_PWR_EnableBkUpAccess();
+  __HAL_RCC_LSEDRIVE_CONFIG(RCC_LSEDRIVE_LOW);
+
   /** Initializes the CPU, AHB and APB buses clocks
   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI48|RCC_OSCILLATORTYPE_HSI
-                              |RCC_OSCILLATORTYPE_MSI;
+                              |RCC_OSCILLATORTYPE_LSE|RCC_OSCILLATORTYPE_MSI;
+  RCC_OscInitStruct.LSEState = RCC_LSE_ON;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSI48State = RCC_HSI48_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
@@ -224,6 +228,11 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+
+  /** Enable MSI Auto calibration
+  */
+  HAL_RCCEx_EnableMSIPLLModeSelection(RCC_MSISPLL_MODE_SEL);
+  HAL_RCCEx_EnableMSIPLLMode();
 
   /** Enable the SYSCFG APB clock
   */
@@ -351,27 +360,6 @@ static void MX_ICACHE_Init(void)
   /* USER CODE BEGIN ICACHE_Init 2 */
 
   /* USER CODE END ICACHE_Init 2 */
-
-}
-
-/**
-  * @brief MEMORYMAP Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_MEMORYMAP_Init(void)
-{
-
-  /* USER CODE BEGIN MEMORYMAP_Init 0 */
-
-  /* USER CODE END MEMORYMAP_Init 0 */
-
-  /* USER CODE BEGIN MEMORYMAP_Init 1 */
-
-  /* USER CODE END MEMORYMAP_Init 1 */
-  /* USER CODE BEGIN MEMORYMAP_Init 2 */
-
-  /* USER CODE END MEMORYMAP_Init 2 */
 
 }
 
