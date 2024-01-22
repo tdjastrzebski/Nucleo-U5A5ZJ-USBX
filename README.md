@@ -1,6 +1,7 @@
-# Nucleo-U5A5ZJ-Q, USBX, USB-C host, reading and writing pewn drive files
-**[Nucleo-U5A5ZJ-Q](https://www.st.com/en/evaluation-tools/nucleo-u5a5zj-q.html) configured as USB Host with MSC (mass storage) support**
-Note: to provide USB power, onboard undocumented jumpers SB8-SB10 must be closed and 2nd JP6 jumper in 5V_USB_C position is required
+# Nucleo-U5A5ZJ-Q (STM32U5A5), USBX, USB-C host, reading and writing pen drive files
+## [Nucleo-U5A5ZJ-Q](https://www.st.com/en/evaluation-tools/nucleo-u5a5zj-q.html) configured as USB-C Host with MSC (mass storage) support
+> Note: to provide USB-C power, onboard undocumented jumpers SB8-SB10 must be closed and 2nd JP6 jumper in 5V_USB_C position is required
+
 ![write process success](Screenshot_2024-01-21.png)
 
 ![jumpers SB8-SB10](IMG_E5587.JPG)
