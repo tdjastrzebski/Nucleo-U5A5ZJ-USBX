@@ -22,7 +22,9 @@
 #include "app_azure_rtos.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "my_printf.h"
+#include "terminal_colors.h"
+#include "app_filex.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,7 +44,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-
+static TX_TIMER blinkLedTimer;
 /* USER CODE END PV */
 
 #if (USE_STATIC_ALLOCATION == 1)
@@ -82,7 +84,13 @@ static TX_BYTE_POOL usbpd_app_byte_pool;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN PFP */
-
+static void _blinkLed(ULONG data) {
+	static uint32_t pattern = 0xF0F0CCC0;
+	static uint32_t shift = 0;
+	HAL_GPIO_WritePin(LED_GREEN_GPIO_Port, LED_GREEN_Pin, (pattern >> shift) & 0x1 ? GPIO_PIN_SET : GPIO_PIN_RESET);
+	shift++;
+	shift %= 32;
+}
 /* USER CODE END PFP */
 
 /**
@@ -93,7 +101,8 @@ static TX_BYTE_POOL usbpd_app_byte_pool;
 VOID tx_application_define(VOID *first_unused_memory)
 {
   /* USER CODE BEGIN  tx_application_define_1*/
-
+  UINT status1 = tx_timer_create(&blinkLedTimer, "blink LED", _blinkLed, 0x1234, UX_MS_TO_TICK(500), 200, TX_AUTO_ACTIVATE);
+  UNUSED(status1);
   /* USER CODE END  tx_application_define_1 */
 #if (USE_STATIC_ALLOCATION == 1)
   UINT status = TX_SUCCESS;
@@ -102,7 +111,7 @@ VOID tx_application_define(VOID *first_unused_memory)
   if (tx_byte_pool_create(&tx_app_byte_pool, "Tx App memory pool", tx_byte_pool_buffer, TX_APP_MEM_POOL_SIZE) != TX_SUCCESS)
   {
     /* USER CODE BEGIN TX_Byte_Pool_Error */
-
+    my_printf(RED("Tx App memory pool error\n"));
     /* USER CODE END TX_Byte_Pool_Error */
   }
   else
@@ -116,9 +125,8 @@ VOID tx_application_define(VOID *first_unused_memory)
     if (status != TX_SUCCESS)
     {
       /* USER CODE BEGIN  App_ThreadX_Init_Error */
-      while(1)
-      {
-      }
+      my_printf(RED("Tx App init error\n"));
+      while(1) {}
       /* USER CODE END  App_ThreadX_Init_Error */
     }
     /* USER CODE BEGIN  App_ThreadX_Init_Success */
@@ -129,7 +137,7 @@ VOID tx_application_define(VOID *first_unused_memory)
   if (tx_byte_pool_create(&fx_app_byte_pool, "Fx App memory pool", fx_byte_pool_buffer, FX_APP_MEM_POOL_SIZE) != TX_SUCCESS)
   {
     /* USER CODE BEGIN FX_Byte_Pool_Error */
-
+    my_printf(RED("FileX App memory pool error\n"));
     /* USER CODE END FX_Byte_Pool_Error */
   }
   else
@@ -143,9 +151,8 @@ VOID tx_application_define(VOID *first_unused_memory)
     if (status != FX_SUCCESS)
     {
       /* USER CODE BEGIN  MX_FileX_Init_Error */
-      while(1)
-      {
-      }
+      my_printf(RED("FileX App init error\n"));
+      while(1) {}
       /* USER CODE END  MX_FileX_Init_Error */
     }
     /* USER CODE BEGIN  MX_FileX_Init_Success */
@@ -156,7 +163,7 @@ VOID tx_application_define(VOID *first_unused_memory)
   if (tx_byte_pool_create(&ux_app_byte_pool, "Ux App memory pool", ux_byte_pool_buffer, UX_APP_MEM_POOL_SIZE) != TX_SUCCESS)
   {
     /* USER CODE BEGIN UX_Byte_Pool_Error */
-
+    my_printf(RED("Ux App memory pool error\n"));
 	/* USER CODE END UX_Byte_Pool_Error */
   }
   else
@@ -170,9 +177,8 @@ VOID tx_application_define(VOID *first_unused_memory)
     if (status != UX_SUCCESS)
     {
       /* USER CODE BEGIN  MX_USBX_Init_Error */
-      while(1)
-      {
-      }
+      my_printf(RED("USBX App init error\n"));
+      while(1) {}
       /* USER CODE END  MX_USBX_Init_Error */
     }
     /* USER CODE BEGIN  MX_USBX_Init_Success */
