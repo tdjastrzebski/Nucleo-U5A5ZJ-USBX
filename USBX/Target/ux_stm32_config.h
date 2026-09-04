@@ -7,7 +7,7 @@
   ******************************************************************************
     * @attention
   *
-  * Copyright (c) 2023 STMicroelectronics.
+  * Copyright (c) 2026 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -30,7 +30,7 @@ extern "C" {
 
 /* USER CODE BEGIN Private Includes */
 
-/* USER CODE BEGIN Private Includes */
+/* USER CODE END Private Includes */
 
 /* Private defines -----------------------------------------------------------*/
 

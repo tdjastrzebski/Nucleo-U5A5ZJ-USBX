@@ -1674,11 +1674,11 @@ HAL_StatusTypeDef HAL_ADC_Start(ADC_HandleTypeDef *hadc)
         {
           ADC_STATE_CLR_SET(hadc->State, HAL_ADC_STATE_INJ_EOC, HAL_ADC_STATE_INJ_BUSY);
         }
+
+        /* Start ADC group regular conversion */
+        LL_ADC_REG_StartConversion(hadc->Instance);
 #endif /* ADC_MULTIMODE_SUPPORT */
       }
-
-      /* Start ADC group regular conversion */
-      LL_ADC_REG_StartConversion(hadc->Instance);
     }
     else
     {
@@ -3320,9 +3320,6 @@ HAL_StatusTypeDef HAL_ADC_ConfigChannel(ADC_HandleTypeDef *hadc, ADC_ChannelConf
     assert_param(IS_ADC_SINGLE_DIFFERENTIAL(pConfig->SingleDiff));
     assert_param(IS_ADC_OFFSET_NUMBER(pConfig->OffsetNumber));
     assert_param(IS_ADC_RANGE(hadc->Instance, ADC_GET_RESOLUTION(hadc), pConfig->Offset));
-    /* if ROVSE is set, the value of the OFFSETy_EN bit in ADCx_OFRy register is
-    ignored (considered as reset) */
-    assert_param(!((pConfig->OffsetNumber != ADC_OFFSET_NONE) && (hadc->Init.OversamplingMode == ENABLE)));
 
     /* Verification of channel number */
     if (pConfig->SingleDiff != ADC_DIFFERENTIAL_ENDED)

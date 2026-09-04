@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2023 STMicroelectronics.
+  * Copyright (c) 2026 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -44,6 +44,7 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
   uint32_t              uwTimclock = 0;
   uint32_t              uwPrescalerValue = 0;
   uint32_t              pFLatency;
+
   HAL_StatusTypeDef     status;
 
   /* Enable TIM7 clock */
@@ -53,7 +54,7 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
   HAL_RCC_GetClockConfig(&clkconfig, &pFLatency);
 
   /* Compute TIM7 clock */
-  uwTimclock = HAL_RCC_GetPCLK1Freq();
+  uwTimclock = 2*HAL_RCC_GetPCLK1Freq();
 
   /* Compute the prescaler value to have TIM7 counter clock equal to 1MHz */
   uwPrescalerValue = (uint32_t) ((uwTimclock / 1000000U) - 1U);
@@ -62,12 +63,11 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
   htim7.Instance = TIM7;
 
   /* Initialize TIMx peripheral as follow:
-
-  + Period = [(TIM7CLK/1000) - 1]. to have a (1/1000) s time base.
-  + Prescaler = (uwTimclock/1000000 - 1) to have a 1MHz counter clock.
-  + ClockDivision = 0
-  + Counter direction = Up
-  */
+   * Period = [(TIM7CLK/1000) - 1]. to have a (1/1000) s time base.
+   * Prescaler = (uwTimclock/1000000 - 1) to have a 1MHz counter clock.
+   * ClockDivision = 0
+   * Counter direction = Up
+   */
   htim7.Init.Period = (1000000U / 1000U) - 1U;
   htim7.Init.Prescaler = uwPrescalerValue;
   htim7.Init.ClockDivision = 0;
@@ -76,6 +76,7 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
   status = HAL_TIM_Base_Init(&htim7);
   if (status == HAL_OK)
   {
+
     /* Start the TIM time Base generation in interrupt mode */
     status = HAL_TIM_Base_Start_IT(&htim7);
     if (status == HAL_OK)

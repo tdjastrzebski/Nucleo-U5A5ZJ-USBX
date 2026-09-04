@@ -7,7 +7,7 @@
   ******************************************************************************
     * @attention
   *
-  * Copyright (c) 2023 STMicroelectronics.
+  * Copyright (c) 2026 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -29,10 +29,10 @@ extern "C" {
 #include "ux_api.h"
 #include "main.h"
 #include "ux_host_msc.h"
+#include "ux_hcd_stm32.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "ux_hcd_stm32.h"
-#include "ux_host_msc.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -41,40 +41,30 @@ extern "C" {
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
-#define USBX_HOST_MEMORY_STACK_SIZE     1024*22
 
 #define UX_HOST_APP_THREAD_STACK_SIZE   1024
 #define UX_HOST_APP_THREAD_PRIO         10
-
 /* USER CODE BEGIN EC */
 
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-#define USBH_UsrLog(...)   printf(__VA_ARGS__);\
-                           printf("\n");
 
-#define USBH_ErrLog(...)   printf("ERROR: ") ;\
-                           printf(__VA_ARGS__);\
-                           printf("\n");
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
 UINT MX_USBX_Host_Init(VOID *memory_ptr);
+UINT MX_USBX_Host_Stack_Init(VOID);
+UINT MX_USBX_Host_Stack_DeInit(VOID);
 
 /* USER CODE BEGIN EFP */
-VOID USBX_APP_Host_Init(VOID);
+
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-typedef enum
-{
-  NONE_USB_HOST = 0,
-  STOP_USB_HOST = 1,
-  START_USB_HOST,
-} USB_MODE_STATE;
+
 /* USER CODE END PD */
 
 #ifndef UX_HOST_APP_THREAD_NAME

@@ -6,8 +6,13 @@
 		"linkerScript": "STM32U5A5ZJTxQ_FLASH.ld",
 		"cpu": "-mcpu=cortex-m33",
 		"fpu": "-mfpu=fpv5-sp-d16 -mfloat-abi=hard",
-		"extraSearchPaths": "",
-		"dFile": "${buildOutput}/${fileDirectory}/${fileName}.d"
+		"extraSearchPaths": "-IDrivers/CMSIS/Device/ST/STM32U5xx/Include -IDrivers/CMSIS/Include",
+		"dFile": "${buildOutput}/${fileDirectory}/${fileName}.d",
+		"libs": [
+			//"-Llvgl/libs/nema_gfx/lib/core/cortex_m33/gcc -l:libnemagfx-float-abi-hard.a",
+			//"-LMiddlewares/ST/STM32_USBPD_Library/Core/lib -l:USBPDCORE_PD3_FULL_CM33_wc32.a",
+			"-LMiddlewares/ST/STM32_USBPD_Library/Core/lib -l:USBPDCORE_PD3_CONFIG_MINSRC_CM33_wc32.a"
+		]
 	},
 	"configurations": [
 		{
@@ -20,7 +25,7 @@
 				},
 				{
 					"name": "release",
-					"params": { "buildTypeFlags": "-Os -g1" } // -O3 -g3
+					"params": { "buildTypeFlags": "-O3 -g3" } // -O3 -g3 / -Os -g1
 				}
 			],
 			"buildSteps": [
@@ -30,9 +35,9 @@
 					"outputFile": "${buildOutput}/${fileDirectory}/${fileName}.o",
 					"trimIncludePaths": true,
 					"params": {
-						"flags": "${cpu} ${fpu} --specs=nano.specs -mthumb -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF[${dFile}] -MT[${outputFile}]"
+						"flags": "${cpu} ${fpu} --specs=nano.specs -mthumb -ffunction-sections -fdata-sections -Wall -fstack-usage -Wno-packed-bitfield-compat -MMD -MP -MF[${dFile}] -MT[${outputFile}]"
 					},
-					"command": "arm-none-eabi-gcc -std=gnu17 -c ${flags} ${buildTypeFlags} (-I[$${includePath}]) (-D$${defines}) (-include [$${forcedInclude}]) [${filePath}] -o [${outputFile}] ${extraSearchPaths}"
+					"command": "arm-none-eabi-gcc -std=gnu2x -c ${flags} ${buildTypeFlags} (-I[$${includePath}]) (-D$${defines}) (-include [$${forcedInclude}]) [${filePath}] -o [${outputFile}] ${extraSearchPaths}"
 				},
 				{
 					"name": "C++ Compile",
@@ -40,9 +45,9 @@
 					"outputFile": "${buildOutput}/${fileDirectory}/${fileName}.o",
 					"trimIncludePaths": true,
 					"params": {
-						"flags": "${cpu} ${fpu} --specs=nano.specs -mthumb -ffunction-sections -fdata-sections -fno-rtti -fno-use-cxa-atexit -Wall -fstack-usage -MMD -MP -MF[${dFile}] -MT[${outputFile}]"
+						"flags": "${cpu} ${fpu} --specs=nano.specs -mthumb -ffunction-sections -fdata-sections -fno-rtti -fno-use-cxa-atexit -Wall -fstack-usage -Wno-packed-bitfield-compat -MMD -MP -MF[${dFile}] -MT[${outputFile}]"
 					},
-					"command": "arm-none-eabi-g++ -std=gnu++17 -c ${flags} ${buildTypeFlags} (-I[$${includePath}]) (-D$${defines}) (-include [$${forcedInclude}]) [${filePath}] -o [${outputFile}] ${extraSearchPaths}"
+					"command": "arm-none-eabi-g++ -std=gnu++2b -c ${flags} ${buildTypeFlags} (-I[$${includePath}]) (-D$${defines}) (-include [$${forcedInclude}]) [${filePath}] -o [${outputFile}] ${extraSearchPaths}"
 				},
 				{
 					"name": "Assembly Compile",
@@ -63,7 +68,7 @@
 					"params": {
 						"flags": "-u _printf_float ${cpu} --specs=nosys.specs -Wl,-Map=[${buildOutput}/${workspaceRootFolderName}.map] -Wl,--gc-sections -static --specs=nano.specs ${fpu} -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group"
 					},
-					"command": "arm-none-eabi-g++ ${flags} -T[${linkerScript}] @[${buildOutput}/objects.txt] -o [${buildOutput}/${workspaceRootFolderName}.elf]"
+					"command": "arm-none-eabi-g++ ${flags} -T[${linkerScript}] @[${buildOutput}/objects.txt] -o [${buildOutput}/${workspaceRootFolderName}.elf] $${libs}"
 				},
 				{
 					"name": "elf -> list",

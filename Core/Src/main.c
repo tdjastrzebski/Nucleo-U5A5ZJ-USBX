@@ -6,7 +6,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2023 STMicroelectronics.
+  * Copyright (c) 2026 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -19,13 +19,13 @@
 /* Includes ------------------------------------------------------------------*/
 #include "app_threadx.h"
 #include "main.h"
+#include "usbpd.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <stdio.h>
 #include "terminal_colors.h"
 #include "trace.h"
-#include "app_usbx_host.h"
+#include "my_printf.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,6 +58,7 @@ HCD_HandleTypeDef hhcd_USB_OTG_HS;
 void SystemClock_Config(void);
 static void SystemPower_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_GPDMA1_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_ICACHE_Init(void);
 static void MX_UCPD1_Init(void);
@@ -68,35 +69,6 @@ static void MX_USART1_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-extern TX_QUEUE ux_app_MsgQueue_UCPD;
-#if defined(__ICCARM__) /* IAR Compiler */
-#pragma data_alignment = 4
-#endif /* defined ( __ICCARM__ ) */
-__ALIGN_BEGIN USB_MODE_STATE USB_Device_EVENT __ALIGN_END = NONE_USB_HOST;
-
-void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin) {
-	if (GPIO_Pin == USER_BUTTON_Pin) {
-		static uint8_t state = 0;
-    trace_HCD(1);
-    
-    if (state == 0) {
-      state = 1;
-      printf(YELLOW("* device connected *") "\n");
-			USB_Device_EVENT = START_USB_HOST;
-			if (tx_queue_send(&ux_app_MsgQueue_UCPD, &USB_Device_EVENT, TX_NO_WAIT) != TX_SUCCESS) {
-				Error_Handler();
-			}
-    } else {
-      state = 0;
-      printf(YELLOW("* device disconnected *") "\n");
-			USB_Device_EVENT = STOP_USB_HOST;
-			if (tx_queue_send(&ux_app_MsgQueue_UCPD, &USB_Device_EVENT, TX_NO_WAIT) != TX_SUCCESS) {
-				Error_Handler();
-			}
-    }
-	}
-}
-
 #ifdef __GNUC__
 #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
 #else
@@ -118,8 +90,9 @@ PUTCHAR_PROTOTYPE {
   */
 int main(void)
 {
+
   /* USER CODE BEGIN 1 */
-  
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -131,11 +104,11 @@ int main(void)
 
   /* USER CODE END Init */
 
-  /* Configure the system clock */
-  SystemClock_Config();
-
   /* Configure the System Power */
   SystemPower_Config();
+
+  /* Configure the system clock */
+  SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
 
@@ -143,17 +116,21 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_GPDMA1_Init();
   MX_ADC1_Init();
   MX_ICACHE_Init();
   MX_UCPD1_Init();
   MX_USART1_UART_Init();
+  /* Call PreOsInit function */
+  USBPD_PreInitOs();
   /* USER CODE BEGIN 2 */
-  //printf(YELLOW_BG("restarted") "\n");
+  my_printf(YELLOW("** restarted **\n"));
   /* USER CODE END 2 */
 
   MX_ThreadX_Init();
 
   /* We should never get here as control is now taken by the scheduler */
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -173,7 +150,6 @@ void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-  RCC_CRSInitTypeDef RCC_CRSInitStruct = {0};
 
   /** Configure the main internal regulator output voltage
   */
@@ -189,17 +165,17 @@ void SystemClock_Config(void)
 
   /** Initializes the CPU, AHB and APB buses clocks
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI48|RCC_OSCILLATORTYPE_HSI
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_HSE
                               |RCC_OSCILLATORTYPE_LSE|RCC_OSCILLATORTYPE_MSI;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.LSEState = RCC_LSE_ON;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSI48State = RCC_HSI48_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.MSIState = RCC_MSI_ON;
   RCC_OscInitStruct.MSICalibrationValue = RCC_MSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.MSIClockRange = RCC_MSIRANGE_2;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_MSI;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLMBOOST = RCC_PLLMBOOST_DIV1;
   RCC_OscInitStruct.PLL.PLLM = 1;
   RCC_OscInitStruct.PLL.PLLN = 20;
@@ -220,9 +196,9 @@ void SystemClock_Config(void)
                               |RCC_CLOCKTYPE_PCLK3;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
-  RCC_ClkInitStruct.APB3CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV8;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV8;
+  RCC_ClkInitStruct.APB3CLKDivider = RCC_HCLK_DIV8;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_4) != HAL_OK)
   {
@@ -233,21 +209,6 @@ void SystemClock_Config(void)
   */
   HAL_RCCEx_EnableMSIPLLModeSelection(RCC_MSISPLL_MODE_SEL);
   HAL_RCCEx_EnableMSIPLLMode();
-
-  /** Enable the SYSCFG APB clock
-  */
-  __HAL_RCC_CRS_CLK_ENABLE();
-
-  /** Configures CRS
-  */
-  RCC_CRSInitStruct.Prescaler = RCC_CRS_SYNC_DIV1;
-  RCC_CRSInitStruct.Source = RCC_CRS_SYNC_SOURCE_LSE;
-  RCC_CRSInitStruct.Polarity = RCC_CRS_SYNC_POLARITY_RISING;
-  RCC_CRSInitStruct.ReloadValue = __HAL_RCC_CRS_RELOADVALUE_CALCULATE(48000000,32768);
-  RCC_CRSInitStruct.ErrorLimitValue = 34;
-  RCC_CRSInitStruct.HSI48CalibrationValue = 32;
-
-  HAL_RCCEx_CRSConfig(&RCC_CRSInitStruct);
 
   /** MCO configuration
   */
@@ -336,6 +297,36 @@ static void MX_ADC1_Init(void)
 }
 
 /**
+  * @brief GPDMA1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_GPDMA1_Init(void)
+{
+
+  /* USER CODE BEGIN GPDMA1_Init 0 */
+
+  /* USER CODE END GPDMA1_Init 0 */
+
+  /* Peripheral clock enable */
+  __HAL_RCC_GPDMA1_CLK_ENABLE();
+
+  /* GPDMA1 interrupt Init */
+    HAL_NVIC_SetPriority(GPDMA1_Channel0_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(GPDMA1_Channel0_IRQn);
+    HAL_NVIC_SetPriority(GPDMA1_Channel1_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(GPDMA1_Channel1_IRQn);
+
+  /* USER CODE BEGIN GPDMA1_Init 1 */
+
+  /* USER CODE END GPDMA1_Init 1 */
+  /* USER CODE BEGIN GPDMA1_Init 2 */
+
+  /* USER CODE END GPDMA1_Init 2 */
+
+}
+
+/**
   * @brief ICACHE Initialization Function
   * @param None
   * @retval None
@@ -380,6 +371,7 @@ static void MX_UCPD1_Init(void)
   /* USER CODE END UCPD1_Init 0 */
 
   LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
+  LL_DMA_InitTypeDef DMA_InitStruct = {0};
 
   /* Peripheral clock enable */
   LL_APB1_GRP2_EnableClock(LL_APB1_GRP2_PERIPH_UCPD1);
@@ -399,6 +391,66 @@ static void MX_UCPD1_Init(void)
   GPIO_InitStruct.Mode = LL_GPIO_MODE_ANALOG;
   GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
   LL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /* UCPD1 DMA Init */
+
+  /* GPDMA1_REQUEST_UCPD1_TX Init */
+  DMA_InitStruct.SrcAddress = 0x00000000U;
+  DMA_InitStruct.DestAddress = 0x00000000U;
+  DMA_InitStruct.Direction = LL_DMA_DIRECTION_MEMORY_TO_PERIPH;
+  DMA_InitStruct.BlkHWRequest = LL_DMA_HWREQUEST_SINGLEBURST;
+  DMA_InitStruct.DataAlignment = LL_DMA_DATA_ALIGN_ZEROPADD;
+  DMA_InitStruct.SrcBurstLength = 1;
+  DMA_InitStruct.DestBurstLength = 1;
+  DMA_InitStruct.SrcDataWidth = LL_DMA_SRC_DATAWIDTH_BYTE;
+  DMA_InitStruct.DestDataWidth = LL_DMA_DEST_DATAWIDTH_BYTE;
+  DMA_InitStruct.SrcIncMode = LL_DMA_SRC_INCREMENT;
+  DMA_InitStruct.DestIncMode = LL_DMA_DEST_FIXED;
+  DMA_InitStruct.Priority = LL_DMA_LOW_PRIORITY_LOW_WEIGHT;
+  DMA_InitStruct.BlkDataLength = 0x00000000U;
+  DMA_InitStruct.TriggerMode = LL_DMA_TRIGM_BLK_TRANSFER;
+  DMA_InitStruct.TriggerPolarity = LL_DMA_TRIG_POLARITY_MASKED;
+  DMA_InitStruct.TriggerSelection = 0x00000000U;
+  DMA_InitStruct.Request = LL_GPDMA1_REQUEST_UCPD1_TX;
+  DMA_InitStruct.TransferEventMode = LL_DMA_TCEM_BLK_TRANSFER;
+  DMA_InitStruct.SrcAllocatedPort = LL_DMA_SRC_ALLOCATED_PORT0;
+  DMA_InitStruct.DestAllocatedPort = LL_DMA_DEST_ALLOCATED_PORT0;
+  DMA_InitStruct.LinkAllocatedPort = LL_DMA_LINK_ALLOCATED_PORT1;
+  DMA_InitStruct.LinkStepMode = LL_DMA_LSM_FULL_EXECUTION;
+  DMA_InitStruct.LinkedListBaseAddr = 0x00000000U;
+  DMA_InitStruct.LinkedListAddrOffset = 0x00000000U;
+  LL_DMA_Init(GPDMA1, LL_DMA_CHANNEL_1, &DMA_InitStruct);
+
+  /* GPDMA1_REQUEST_UCPD1_RX Init */
+  DMA_InitStruct.SrcAddress = 0x00000000U;
+  DMA_InitStruct.DestAddress = 0x00000000U;
+  DMA_InitStruct.Direction = LL_DMA_DIRECTION_PERIPH_TO_MEMORY;
+  DMA_InitStruct.BlkHWRequest = LL_DMA_HWREQUEST_SINGLEBURST;
+  DMA_InitStruct.DataAlignment = LL_DMA_DATA_ALIGN_ZEROPADD;
+  DMA_InitStruct.SrcBurstLength = 1;
+  DMA_InitStruct.DestBurstLength = 1;
+  DMA_InitStruct.SrcDataWidth = LL_DMA_SRC_DATAWIDTH_BYTE;
+  DMA_InitStruct.DestDataWidth = LL_DMA_DEST_DATAWIDTH_BYTE;
+  DMA_InitStruct.SrcIncMode = LL_DMA_SRC_FIXED;
+  DMA_InitStruct.DestIncMode = LL_DMA_DEST_INCREMENT;
+  DMA_InitStruct.Priority = LL_DMA_LOW_PRIORITY_LOW_WEIGHT;
+  DMA_InitStruct.BlkDataLength = 0x00000000U;
+  DMA_InitStruct.TriggerMode = LL_DMA_TRIGM_BLK_TRANSFER;
+  DMA_InitStruct.TriggerPolarity = LL_DMA_TRIG_POLARITY_MASKED;
+  DMA_InitStruct.TriggerSelection = 0x00000000U;
+  DMA_InitStruct.Request = LL_GPDMA1_REQUEST_UCPD1_RX;
+  DMA_InitStruct.TransferEventMode = LL_DMA_TCEM_BLK_TRANSFER;
+  DMA_InitStruct.SrcAllocatedPort = LL_DMA_SRC_ALLOCATED_PORT0;
+  DMA_InitStruct.DestAllocatedPort = LL_DMA_DEST_ALLOCATED_PORT0;
+  DMA_InitStruct.LinkAllocatedPort = LL_DMA_LINK_ALLOCATED_PORT1;
+  DMA_InitStruct.LinkStepMode = LL_DMA_LSM_FULL_EXECUTION;
+  DMA_InitStruct.LinkedListBaseAddr = 0x00000000U;
+  DMA_InitStruct.LinkedListAddrOffset = 0x00000000U;
+  LL_DMA_Init(GPDMA1, LL_DMA_CHANNEL_0, &DMA_InitStruct);
+
+  /* UCPD1 interrupt Init */
+  NVIC_SetPriority(UCPD1_IRQn, NVIC_EncodePriority(NVIC_GetPriorityGrouping(),5, 0));
+  NVIC_EnableIRQ(UCPD1_IRQn);
 
   /* USER CODE BEGIN UCPD1_Init 1 */
 
@@ -474,18 +526,19 @@ void MX_USB_OTG_HS_HCD_Init(void)
   /* USER CODE END USB_OTG_HS_Init 1 */
   hhcd_USB_OTG_HS.Instance = USB_OTG_HS;
   hhcd_USB_OTG_HS.Init.Host_channels = 16;
-  hhcd_USB_OTG_HS.Init.speed = HCD_SPEED_FULL;
+  hhcd_USB_OTG_HS.Init.speed = HCD_SPEED_HIGH;
   hhcd_USB_OTG_HS.Init.dma_enable = DISABLE;
   hhcd_USB_OTG_HS.Init.phy_itface = USB_OTG_HS_EMBEDDED_PHY;
   hhcd_USB_OTG_HS.Init.Sof_enable = DISABLE;
   hhcd_USB_OTG_HS.Init.low_power_enable = DISABLE;
+  hhcd_USB_OTG_HS.Init.vbus_sensing_enable = DISABLE;
   hhcd_USB_OTG_HS.Init.use_external_vbus = DISABLE;
   if (HAL_HCD_Init(&hhcd_USB_OTG_HS) != HAL_OK)
   {
     Error_Handler();
   }
   /* USER CODE BEGIN USB_OTG_HS_Init 2 */
-  
+
   /* USER CODE END USB_OTG_HS_Init 2 */
 
 }
@@ -498,8 +551,9 @@ void MX_USB_OTG_HS_HCD_Init(void)
 static void MX_GPIO_Init(void)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
-/* USER CODE BEGIN MX_GPIO_Init_1 */
-/* USER CODE END MX_GPIO_Init_1 */
+  /* USER CODE BEGIN MX_GPIO_Init_1 */
+
+  /* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
@@ -562,8 +616,9 @@ static void MX_GPIO_Init(void)
   HAL_NVIC_SetPriority(EXTI13_IRQn, 15, 0);
   HAL_NVIC_EnableIRQ(EXTI13_IRQn);
 
-/* USER CODE BEGIN MX_GPIO_Init_2 */
-/* USER CODE END MX_GPIO_Init_2 */
+  /* USER CODE BEGIN MX_GPIO_Init_2 */
+
+  /* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */
@@ -583,8 +638,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   /* USER CODE BEGIN Callback 0 */
 
   /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM7) {
+  if (htim->Instance == TIM7)
+  {
     HAL_IncTick();
+    USBPD_DPM_TimerCounter();
   }
   /* USER CODE BEGIN Callback 1 */
 
@@ -593,21 +650,21 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 /**
   * @brief  This function is executed in case of error occurrence.
+  * @param None
   * @retval None
   */
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
-  /* USER CODE BEGIN Error_Handler_Debug */
-  printf(RED_BG("error handler") "\n");
-	/* User can add his own implementation to report the HAL error return state */
-	__disable_irq();
-	while (1) {
-	}
+  my_printf(RED_BG("error handler") "\n");
+  /* User can add his own implementation to report the HAL error return state */
+  __disable_irq();
+  while (1)
+  {
+  }
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.

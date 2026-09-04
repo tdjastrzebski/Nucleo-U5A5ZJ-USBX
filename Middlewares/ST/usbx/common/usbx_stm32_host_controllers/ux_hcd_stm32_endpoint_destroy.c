@@ -150,6 +150,11 @@ UINT                   endpoint_type;
             }
         }
 
+        if (endpoint_type == UX_ISOCHRONOUS_ENDPOINT)
+        {
+          ed -> ux_stm32_ed_data_free = UX_HCD_STM32_ED_STATUS_ALIGNED_BUFFER_PENDING_FREE;
+        }
+
         /* Decrease the periodic active count.  */
         hcd_stm32 -> ux_hcd_stm32_periodic_scheduler_active --;
     }
@@ -161,12 +166,12 @@ UINT                   endpoint_type;
     HAL_HCD_HC_ClearHubInfo(hcd_stm32->hcd_handle, ed -> ux_stm32_ed_channel);
 #endif /* USBH_HAL_HUB_SPLIT_SUPPORTED */
 
-    /* Finish current transfer.  */
-    _ux_hcd_stm32_request_trans_finish(hcd_stm32, ed);
+    /* Finish current transfer and reset the endpoint  */
+    _ux_hcd_stm32_endpoint_reset(hcd_stm32, endpoint);
 
 #if defined(UX_HOST_STANDALONE)
 
-    /* If setup memory is not freed correct, free it.  */
+    /* If the setup memory has not been freed correctly, free it now. */
     if (ed -> ux_stm32_ed_setup)
         _ux_utility_memory_free(ed -> ux_stm32_ed_setup);
 

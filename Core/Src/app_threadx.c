@@ -7,7 +7,7 @@
   ******************************************************************************
     * @attention
   *
-  * Copyright (c) 2023 STMicroelectronics.
+  * Copyright (c) 2026 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -69,21 +69,21 @@ UINT App_ThreadX_Init(VOID *memory_ptr)
 }
 
   /**
-  * @brief  MX_ThreadX_Init
+  * @brief  Function that implements the kernel's initialization.
   * @param  None
   * @retval None
   */
 void MX_ThreadX_Init(void)
 {
-  /* USER CODE BEGIN  Before_Kernel_Start */
+  /* USER CODE BEGIN Before_Kernel_Start */
 
-  /* USER CODE END  Before_Kernel_Start */
+  /* USER CODE END Before_Kernel_Start */
 
   tx_kernel_enter();
 
-  /* USER CODE BEGIN  Kernel_Start_Error */
+  /* USER CODE BEGIN Kernel_Start_Error */
 
-  /* USER CODE END  Kernel_Start_Error */
+  /* USER CODE END Kernel_Start_Error */
 }
 
 /* USER CODE BEGIN 1 */

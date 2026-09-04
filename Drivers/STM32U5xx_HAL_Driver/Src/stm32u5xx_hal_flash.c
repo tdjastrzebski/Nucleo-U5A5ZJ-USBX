@@ -52,6 +52,10 @@
       (#) Flash Memory IO Programming functions:
            (++) Lock and Unlock the FLASH interface using HAL_FLASH_Unlock() and
                 HAL_FLASH_Lock() functions
+         (++) Lock and unlock the non-secure FLASH control registers using
+           HAL_FLASH_Unlock_NS() and HAL_FLASH_Lock_NS() functions in secure context
+         (++) Lock and unlock the secure FLASH control registers using
+           HAL_FLASH_Unlock_S() and HAL_FLASH_Lock_S() functions in secure context
            (++) Program functions: quad-words and burst program (8 quad-words)
            (++) There are two modes of programming :
             (+++) Polling mode using HAL_FLASH_Program() function
@@ -513,6 +517,96 @@ HAL_StatusTypeDef HAL_FLASH_Lock(void)
   return status;
 }
 
+#if defined (__ARM_FEATURE_CMSE) && (__ARM_FEATURE_CMSE == 3U)
+/**
+  * @brief  Unlock the non-secure FLASH control register access in secure context.
+  * @retval HAL Status
+  */
+HAL_StatusTypeDef HAL_FLASH_Unlock_NS(void)
+{
+  HAL_StatusTypeDef status = HAL_OK;
+
+  if (READ_BIT(FLASH->NSCR, FLASH_NSCR_LOCK) != 0U)
+  {
+    /* Authorize the FLASH Registers access */
+    WRITE_REG(FLASH->NSKEYR, FLASH_KEY1);
+    WRITE_REG(FLASH->NSKEYR, FLASH_KEY2);
+
+    /* verify Flash is unlocked */
+    if (READ_BIT(FLASH->NSCR, FLASH_NSCR_LOCK) != 0U)
+    {
+      status = HAL_ERROR;
+    }
+  }
+
+  return status;
+}
+
+/**
+  * @brief  Lock the non-secure FLASH control register access in secure context.
+  * @retval HAL Status
+  */
+HAL_StatusTypeDef HAL_FLASH_Lock_NS(void)
+{
+  HAL_StatusTypeDef status = HAL_ERROR;
+
+  /* Set the LOCK Bit to lock the FLASH Registers access */
+  SET_BIT(FLASH->NSCR, FLASH_NSCR_LOCK);
+
+  /* verify Flash is locked */
+  if (READ_BIT(FLASH->NSCR, FLASH_NSCR_LOCK) != 0U)
+  {
+    status = HAL_OK;
+  }
+
+  return status;
+}
+
+/**
+  * @brief  Unlock the secure FLASH control register access in secure context.
+  * @retval HAL Status
+  */
+HAL_StatusTypeDef HAL_FLASH_Unlock_S(void)
+{
+  HAL_StatusTypeDef status = HAL_OK;
+
+  if (READ_BIT(FLASH->SECCR, FLASH_SECCR_LOCK) != 0U)
+  {
+    /* Authorize the FLASH Registers access */
+    WRITE_REG(FLASH->SECKEYR, FLASH_KEY1);
+    WRITE_REG(FLASH->SECKEYR, FLASH_KEY2);
+
+    /* verify Flash is unlocked */
+    if (READ_BIT(FLASH->SECCR, FLASH_SECCR_LOCK) != 0U)
+    {
+      status = HAL_ERROR;
+    }
+  }
+
+  return status;
+}
+
+/**
+  * @brief  Lock the secure FLASH control register access in secure context.
+  * @retval HAL Status
+  */
+HAL_StatusTypeDef HAL_FLASH_Lock_S(void)
+{
+  HAL_StatusTypeDef status = HAL_ERROR;
+
+  /* Set the LOCK Bit to lock the FLASH Registers access */
+  SET_BIT(FLASH->SECCR, FLASH_SECCR_LOCK);
+
+  /* verify Flash is locked */
+  if (READ_BIT(FLASH->SECCR, FLASH_SECCR_LOCK) != 0U)
+  {
+    status = HAL_OK;
+  }
+
+  return status;
+}
+#endif /* __ARM_FEATURE_CMSE */
+
 /**
   * @brief  Unlock the FLASH Option Bytes Registers access.
   * @retval HAL Status
@@ -626,7 +720,7 @@ HAL_StatusTypeDef FLASH_WaitForLastOperation(uint32_t Timeout)
   /* Wait for the FLASH operation to complete by polling on BUSY and WDW flags to be reset.
      Even if the FLASH operation fails, the BUSY & WDW flags will be reset, and an error flag will be set */
 
-  uint32_t timeout = HAL_GetTick() + Timeout;
+  uint32_t tickstart = HAL_GetTick();
   uint32_t error;
   __IO uint32_t *reg_sr;
 
@@ -637,7 +731,7 @@ HAL_StatusTypeDef FLASH_WaitForLastOperation(uint32_t Timeout)
   {
     if (Timeout != HAL_MAX_DELAY)
     {
-      if (HAL_GetTick() >= timeout)
+      if(((HAL_GetTick() - tickstart) >= Timeout) || (Timeout == 0U))
       {
         return HAL_TIMEOUT;
       }

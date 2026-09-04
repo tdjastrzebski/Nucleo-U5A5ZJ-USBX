@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2023 STMicroelectronics.
+  * Copyright (c) 2026 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -17,12 +17,10 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
-
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
 /* USER CODE BEGIN Includes */
-#include "trace.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -63,11 +61,14 @@
   */
 void HAL_MspInit(void)
 {
+
   /* USER CODE BEGIN MspInit 0 */
 
   /* USER CODE END MspInit 0 */
 
   __HAL_RCC_PWR_CLK_ENABLE();
+  HAL_PWREx_EnableVddUSB();
+  HAL_PWREx_EnableVddIO2();
   HAL_PWREx_EnableVddA();
 
   /* System interrupt init*/
@@ -78,20 +79,20 @@ void HAL_MspInit(void)
 }
 
 /**
-* @brief ADC MSP Initialization
-* This function configures the hardware resources used in this example
-* @param hadc: ADC handle pointer
-* @retval None
-*/
+  * @brief ADC MSP Initialization
+  * This function configures the hardware resources used in this example
+  * @param hadc: ADC handle pointer
+  * @retval None
+  */
 void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
   RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
   if(hadc->Instance==ADC1)
   {
-  /* USER CODE BEGIN ADC1_MspInit 0 */
+    /* USER CODE BEGIN ADC1_MspInit 0 */
 
-  /* USER CODE END ADC1_MspInit 0 */
+    /* USER CODE END ADC1_MspInit 0 */
 
   /** Initializes the peripherals clock
   */
@@ -114,26 +115,27 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* hadc)
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(VBUS_SENSE_GPIO_Port, &GPIO_InitStruct);
 
-  /* USER CODE BEGIN ADC1_MspInit 1 */
+    /* USER CODE BEGIN ADC1_MspInit 1 */
 
-  /* USER CODE END ADC1_MspInit 1 */
+    /* USER CODE END ADC1_MspInit 1 */
+
   }
 
 }
 
 /**
-* @brief ADC MSP De-Initialization
-* This function freeze the hardware resources used in this example
-* @param hadc: ADC handle pointer
-* @retval None
-*/
+  * @brief ADC MSP De-Initialization
+  * This function freeze the hardware resources used in this example
+  * @param hadc: ADC handle pointer
+  * @retval None
+  */
 void HAL_ADC_MspDeInit(ADC_HandleTypeDef* hadc)
 {
   if(hadc->Instance==ADC1)
   {
-  /* USER CODE BEGIN ADC1_MspDeInit 0 */
+    /* USER CODE BEGIN ADC1_MspDeInit 0 */
 
-  /* USER CODE END ADC1_MspDeInit 0 */
+    /* USER CODE END ADC1_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_ADC12_CLK_DISABLE();
 
@@ -142,33 +144,33 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* hadc)
     */
     HAL_GPIO_DeInit(VBUS_SENSE_GPIO_Port, VBUS_SENSE_Pin);
 
-  /* USER CODE BEGIN ADC1_MspDeInit 1 */
+    /* USER CODE BEGIN ADC1_MspDeInit 1 */
 
-  /* USER CODE END ADC1_MspDeInit 1 */
+    /* USER CODE END ADC1_MspDeInit 1 */
   }
 
 }
 
 /**
-* @brief UART MSP Initialization
-* This function configures the hardware resources used in this example
-* @param huart: UART handle pointer
-* @retval None
-*/
+  * @brief UART MSP Initialization
+  * This function configures the hardware resources used in this example
+  * @param huart: UART handle pointer
+  * @retval None
+  */
 void HAL_UART_MspInit(UART_HandleTypeDef* huart)
 {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
   RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
   if(huart->Instance==USART1)
   {
-  /* USER CODE BEGIN USART1_MspInit 0 */
+    /* USER CODE BEGIN USART1_MspInit 0 */
 
-  /* USER CODE END USART1_MspInit 0 */
+    /* USER CODE END USART1_MspInit 0 */
 
   /** Initializes the peripherals clock
   */
     PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART1;
-    PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK2;
+    PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_HSI;
     if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
     {
       Error_Handler();
@@ -189,26 +191,27 @@ void HAL_UART_MspInit(UART_HandleTypeDef* huart)
     GPIO_InitStruct.Alternate = GPIO_AF7_USART1;
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /* USER CODE BEGIN USART1_MspInit 1 */
+    /* USER CODE BEGIN USART1_MspInit 1 */
 
-  /* USER CODE END USART1_MspInit 1 */
+    /* USER CODE END USART1_MspInit 1 */
+
   }
 
 }
 
 /**
-* @brief UART MSP De-Initialization
-* This function freeze the hardware resources used in this example
-* @param huart: UART handle pointer
-* @retval None
-*/
+  * @brief UART MSP De-Initialization
+  * This function freeze the hardware resources used in this example
+  * @param huart: UART handle pointer
+  * @retval None
+  */
 void HAL_UART_MspDeInit(UART_HandleTypeDef* huart)
 {
   if(huart->Instance==USART1)
   {
-  /* USER CODE BEGIN USART1_MspDeInit 0 */
+    /* USER CODE BEGIN USART1_MspDeInit 0 */
 
-  /* USER CODE END USART1_MspDeInit 0 */
+    /* USER CODE END USART1_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_USART1_CLK_DISABLE();
 
@@ -218,34 +221,34 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* huart)
     */
     HAL_GPIO_DeInit(GPIOA, T_VCP_TX_Pin|T_VCP_RX_Pin);
 
-  /* USER CODE BEGIN USART1_MspDeInit 1 */
+    /* USER CODE BEGIN USART1_MspDeInit 1 */
 
-  /* USER CODE END USART1_MspDeInit 1 */
+    /* USER CODE END USART1_MspDeInit 1 */
   }
 
 }
 
 /**
-* @brief HCD MSP Initialization
-* This function configures the hardware resources used in this example
-* @param hhcd: HCD handle pointer
-* @retval None
-*/
+  * @brief HCD MSP Initialization
+  * This function configures the hardware resources used in this example
+  * @param hhcd: HCD handle pointer
+  * @retval None
+  */
 void HAL_HCD_MspInit(HCD_HandleTypeDef* hhcd)
 {
   RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
   if(hhcd->Instance==USB_OTG_HS)
   {
-  /* USER CODE BEGIN USB_OTG_HS_MspInit 0 */
-  __HAL_RCC_SYSCFG_CLK_ENABLE();
-  HAL_SYSCFG_SetOTGPHYDisconnectThreshold(SYSCFG_OTG_HS_PHY_DISCONNECT_5_9PERCENT);
-	HAL_SYSCFG_SetOTGPHYSquelchThreshold(SYSCFG_OTG_HS_PHY_SQUELCH_15PERCENT);
-  /* USER CODE END USB_OTG_HS_MspInit 0 */
+    /* USER CODE BEGIN USB_OTG_HS_MspInit 0 */
+
+    __HAL_RCC_SYSCFG_CLK_ENABLE();
+
+    /* USER CODE END USB_OTG_HS_MspInit 0 */
 
   /** Initializes the peripherals clock
   */
     PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USBPHY;
-    PeriphClkInit.UsbPhyClockSelection = RCC_USBPHYCLKSOURCE_PLL1;
+    PeriphClkInit.UsbPhyClockSelection = RCC_USBPHYCLKSOURCE_HSE;
     if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
     {
       Error_Handler();
@@ -283,36 +286,36 @@ void HAL_HCD_MspInit(HCD_HandleTypeDef* hhcd)
     /* USB_OTG_HS interrupt Init */
     HAL_NVIC_SetPriority(OTG_HS_IRQn, 14, 0);
     HAL_NVIC_EnableIRQ(OTG_HS_IRQn);
-  /* USER CODE BEGIN USB_OTG_HS_MspInit 1 */
+    /* USER CODE BEGIN USB_OTG_HS_MspInit 1 */
 
-  //trace_HCD(1);
-  /* USER CODE END USB_OTG_HS_MspInit 1 */
+    /* USER CODE END USB_OTG_HS_MspInit 1 */
+
   }
 
 }
 
 /**
-* @brief HCD MSP De-Initialization
-* This function freeze the hardware resources used in this example
-* @param hhcd: HCD handle pointer
-* @retval None
-*/
+  * @brief HCD MSP De-Initialization
+  * This function freeze the hardware resources used in this example
+  * @param hhcd: HCD handle pointer
+  * @retval None
+  */
 void HAL_HCD_MspDeInit(HCD_HandleTypeDef* hhcd)
 {
   if(hhcd->Instance==USB_OTG_HS)
   {
-  /* USER CODE BEGIN USB_OTG_HS_MspDeInit 0 */
+    /* USER CODE BEGIN USB_OTG_HS_MspDeInit 0 */
 
-  /* USER CODE END USB_OTG_HS_MspDeInit 0 */
+    /* USER CODE END USB_OTG_HS_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_USB_OTG_HS_CLK_DISABLE();
     __HAL_RCC_USBPHYC_CLK_DISABLE();
 
     /* USB_OTG_HS interrupt DeInit */
     HAL_NVIC_DisableIRQ(OTG_HS_IRQn);
-  /* USER CODE BEGIN USB_OTG_HS_MspDeInit 1 */
+    /* USER CODE BEGIN USB_OTG_HS_MspDeInit 1 */
 
-  /* USER CODE END USB_OTG_HS_MspDeInit 1 */
+    /* USER CODE END USB_OTG_HS_MspDeInit 1 */
   }
 
 }

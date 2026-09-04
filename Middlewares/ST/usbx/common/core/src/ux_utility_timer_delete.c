@@ -28,39 +28,32 @@
 #include "ux_api.h"
 
 
+#if !defined(UX_STANDALONE)
 /**************************************************************************/ 
 /*                                                                        */ 
 /*  FUNCTION                                               RELEASE        */ 
 /*                                                                        */ 
-/*    _ux_utility_pci_read                                PORTABLE C      */ 
-/*                                                           6.1          */
+/*    _ux_utility_timer_delete                            PORTABLE C      */ 
+/*                                                           6.1.11       */
 /*  AUTHOR                                                                */
 /*                                                                        */
 /*    Chaoqiong Xiao, Microsoft Corporation                               */
 /*                                                                        */
 /*  DESCRIPTION                                                           */
 /*                                                                        */ 
-/*    This function reads a 32/16/8 bit value from a specific PCI bus     */ 
-/*    at a certain offset.                                                */ 
+/*    This function deletes a timer.                                      */ 
 /*                                                                        */ 
 /*  INPUT                                                                 */ 
 /*                                                                        */ 
-/*    bus_number                            PCI bus number                */ 
-/*    device_number                         Device number                 */ 
-/*    function_number                       Function number               */ 
-/*    offset                                Offset                        */ 
-/*    read_size                             Size of read                  */ 
+/*    timer                                 Pointer to timer              */ 
 /*                                                                        */ 
 /*  OUTPUT                                                                */ 
 /*                                                                        */ 
-/*    32-bit value                                                        */ 
+/*    Completion Status                                                   */ 
 /*                                                                        */ 
 /*  CALLS                                                                 */ 
 /*                                                                        */ 
-/*    inpl                                  PCI input long                */ 
-/*    inpw                                  PCI input word                */ 
-/*    inpb                                  PCI input byte                */ 
-/*    outpl                                 PCI output function           */
+/*    tx_timer_delete                       ThreadX timer delete          */
 /*                                                                        */ 
 /*  CALLED BY                                                             */ 
 /*                                                                        */ 
@@ -70,56 +63,22 @@
 /*                                                                        */ 
 /*    DATE              NAME                      DESCRIPTION             */ 
 /*                                                                        */ 
-/*  05-19-2020     Chaoqiong Xiao           Initial Version 6.0           */
-/*  09-30-2020     Chaoqiong Xiao           Modified comment(s),          */
-/*                                            resulting in version 6.1    */
+/*  09-30-2020     Chaoqiong Xiao           Initial Version 6.1           */
+/*  04-25-2022     Chaoqiong Xiao           Modified comment(s),          */
+/*                                            off in standalone build,    */
+/*                                            resulting in version 6.1.11 */
 /*                                                                        */
 /**************************************************************************/
-ULONG  _ux_utility_pci_read(ULONG bus_number, ULONG device_number, ULONG function_number,
-                                        ULONG offset, UINT read_size)
+UINT  _ux_utility_timer_delete(TX_TIMER *timer)
 {
 
-ULONG   destination_address;
-ULONG   cfg_ctrl;
+UINT    status;
 
-    
-    /* Calculate the destination address.  */
-    destination_address =  (((bus_number << 16) & 0x00ff0000) | ((device_number << 11) & 0x0000f800) |
-                                ((function_number << 8) & 0x00000700));
 
-    /* Calculate the configure control value.  */
-    cfg_ctrl = destination_address | offset | 0x80000000;
+    /* Call ThreadX to delete the timer object.  */
+    status =  tx_timer_delete(timer);
 
-    /* Read based on the size requested.  */
-    switch(read_size)
-    {
-
-    case 32:
-
-        /* Write the address we need to read from.  */
-        outpl(UX_PCI_CFG_CTRL_ADDRESS, cfg_ctrl);
-
-        /* Return the 32 bit content of this address.  */
-        return(inpl(UX_PCI_CFG_DATA_ADDRESS));
-    
-    case 16:
-
-        /* Write the address we need to read from.  */
-        outpl(UX_PCI_CFG_CTRL_ADDRESS, cfg_ctrl);
-
-        /* Return the 16 bit content of this address.  */
-        return((USHORT)(inpw(UX_PCI_CFG_DATA_ADDRESS)));
-
-    case 8:
-
-        /* Write the address we need to read from.  */
-        outpl(UX_PCI_CFG_CTRL_ADDRESS, cfg_ctrl);
-
-        /* Return the 8 bit content of this address */
-        return((ULONG)(inpb(UX_PCI_CFG_DATA_ADDRESS)));
-
-    default:
-
-        return(0);
-    }
+    /* Return completion status.  */
+    return(status);
 }
+#endif

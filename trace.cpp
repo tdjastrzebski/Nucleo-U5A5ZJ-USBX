@@ -4,7 +4,21 @@
 
 #include "trace.h"
 
-#include "stm32u5xx.h"
+#include "main.h"
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdint.h>
+
+// #define GET_REG_FIELD_2BITS(reg, fld) (GET_REG_FIELD_BIT(reg, fld, 1) * 10 + GET_REG_FIELD_BIT(reg, fld, 0))
+// #define GET_REG_FIELD_3BITS(reg, fld) (GET_REG_FIELD_BIT(reg, fld, 2) * 100 + GET_REG_FIELD_BIT(reg, fld, 1) * 10 + GET_REG_FIELD_BIT(reg, fld, 0))
+// #define GET_REG_FIELD_4BITS(reg, fld) (GET_REG_FIELD_BIT(reg, fld, 3) * 1000 + GET_REG_FIELD_BIT(reg, fld, 2) * 100 + GET_REG_FIELD_BIT(reg, fld, 1) * 10 + GET_REG_FIELD_BIT(reg, fld, 0))
+
+#if defined(TRACE_LEVEL) && TRACE_LEVEL > 0
+// see: https://gcc.gnu.org/onlinedocs/cpp/Variadic-Macros.html
+#define trace(level, format_msg, ...) _trace((level), (format_msg)__VA_OPT__(, ) __VA_ARGS__)
+#else
+#define trace(level, format_msg, ...)
+#endif
 
 static void _trace(uint8_t level, const char* format_msg, ...);
 
@@ -45,22 +59,6 @@ void trace_HCD(uint8_t level) {
 	      GET_REG_FIELD_BIT(SYSCFG->OTGHSPHYTUNER2, SYSCFG_OTGHSPHYTUNER2_SQRXTUNE, 2), GET_REG_FIELD_BIT(SYSCFG->OTGHSPHYTUNER2, SYSCFG_OTGHSPHYTUNER2_SQRXTUNE, 1), GET_REG_FIELD_BIT(SYSCFG->OTGHSPHYTUNER2, SYSCFG_OTGHSPHYTUNER2_SQRXTUNE, 0),
 	      GET_REG_FIELD_BIT(SYSCFG->OTGHSPHYTUNER2, SYSCFG_OTGHSPHYTUNER2_COMPDISTUNE, 2), GET_REG_FIELD_BIT(SYSCFG->OTGHSPHYTUNER2, SYSCFG_OTGHSPHYTUNER2_COMPDISTUNE, 1), GET_REG_FIELD_BIT(SYSCFG->OTGHSPHYTUNER2, SYSCFG_OTGHSPHYTUNER2_COMPDISTUNE, 0));
 
-	// 73.13.1 CSR memory map
-
-// missing HAL register fileds
-#define USB_OTG_GOTGCTL_CURMOD_Pos (21U)
-#define USB_OTG_GOTGCTL_CURMOD (0x1U << USB_OTG_GOTGCTL_CURMOD_Pos)
-#define USB_OTG_GOTGCTL_OTGVER_Pos (20U)
-#define USB_OTG_GOTGCTL_OTGVER (0x1U << USB_OTG_GOTGCTL_OTGVER_Pos)
-#define USB_OTG_GOTGCTL_ASVLD_Pos (18U)
-#define USB_OTG_GOTGCTL_ASVLD (0x1U << USB_OTG_GOTGCTL_ASVLD_Pos)
-#define USB_OTG_GOTGCTL_DBCT_Pos (17U)
-#define USB_OTG_GOTGCTL_DBCT (0x1U << USB_OTG_GOTGCTL_DBCT_Pos)
-#define USB_OTG_GOTGCTL_CIDSTS_Pos (16U)
-#define USB_OTG_GOTGCTL_CIDSTS (0x1U << USB_OTG_GOTGCTL_CIDSTS_Pos)
-#define USB_OTG_GOTGCTL_EHEN_Pos (12U)
-#define USB_OTG_GOTGCTL_EHEN (0x1U << USB_OTG_GOTGCTL_EHEN_Pos)
-
 	// 73.14.1 OTG control and status register (OTG_GOTGCTL)
 	trace(level, "[GOTGCTL] CURMOD OTGVER BSVLD ASVLD DBCT CIDSTS EHEN BVALOVAL BVALOEN AVALOVAL AVALOEN VBVALOVAL VBVALOEN\n");
 	trace(level, "          %s     %s     %s    %s    %s   %s     %s   %s       %s      %s       %s      %s        %s\n",
@@ -87,8 +85,6 @@ void trace_HCD(uint8_t level) {
 	      GET_REG_FLAGX(USB_OTG_HS->GUSBCFG, USB_OTG_GUSBCFG_FDMOD), GET_REG_FLAGX(USB_OTG_HS->GUSBCFG, USB_OTG_GUSBCFG_FHMOD),
 	      GET_REG_FLAGX(USB_OTG_HS->GUSBCFG, USB_OTG_GUSBCFG_TSDPS), GET_REG_FLAGX(USB_OTG_HS->GUSBCFG, USB_OTG_GUSBCFG_PHYLPCS), GET_REG_FLAGX(USB_OTG_HS->GUSBCFG, USB_OTG_GUSBCFG_TRDT), GET_REG_FLAGX(USB_OTG_HS->GUSBCFG, USB_OTG_GUSBCFG_TOCAL));
 
-#define USB_OTG_GINTSTS_RSTDET_Pos (23U)
-#define USB_OTG_GINTSTS_RSTDET (0x1U << USB_OTG_GINTSTS_RSTDET_Pos)
 	// 73.14.6 OTG core interrupt register [alternate] (OTG_GINTSTS) - host mode
 	trace(level, "[GINTSTS] WKUPINT SRQINT DISCINT CIDSCHG LPMINT PTXFE HCINT HPRTINT RSTDET DATAFSUSP IPXFR IISOIXFR OEPINT IEPINT EOPF ISOODRP ENUMDNE USBRST USBSUSP ESUSP GONAKEFF GINAKEFF NPTXFE SOF OTGINT MMIS CMOD\n");
 	trace(level, "          %s      %s     %s      %s      %s     %s    %s    %s      %s     %s        %s    %s       %s     %s     %s   %s      %s      %s     %s      %s    %s       %s       %s     %s  %s     %s   %s\n",

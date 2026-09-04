@@ -8,7 +8,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2023 STMicroelectronics.
+  * Copyright (c) 2026 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -41,13 +41,15 @@ extern "C" {
 /* Exported constants --------------------------------------------------------*/
 /* Using static memory allocation via threadX Byte memory pools */
 
-#define USE_STATIC_ALLOCATION                1
+#define USE_STATIC_ALLOCATION                    1
 
-#define TX_APP_MEM_POOL_SIZE                     1024
+#define TX_APP_MEM_POOL_SIZE                     16*1024
 
 #define FX_APP_MEM_POOL_SIZE                     1024
 
-#define UX_HOST_APP_MEM_POOL_SIZE                26624
+#define UX_APP_MEM_POOL_SIZE                     1024
+
+#define USBPD_DEVICE_APP_MEM_POOL_SIZE              5000
 
 /* USER CODE BEGIN EC */
 
@@ -71,6 +73,4 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-
 #endif /* APP_AZURE_RTOS_CONFIG_H */
-

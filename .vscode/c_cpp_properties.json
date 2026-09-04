@@ -4,31 +4,37 @@
         {
             "name": "gcc",
             "intelliSenseMode": "gcc-arm",
-            "cStandard": "c17",
-            "cppStandard": "c++17",
+            "cStandard": "c23",
+            "cppStandard": "c++23",
             "compilerPath": "${env:MBED_GCC_ARM_PATH}/arm-none-eabi-g++",
             "forcedInclude": [
-                //"Drivers/CMSIS/Device/ST/STM32U5xx/Include/stm32u5xx.h"
             ],
             "includePath": [
                 "${workspaceFolder}",
                 "Core/**",
                 "Drivers/**",
-                "FileX/**",
-                "USBX/**",
                 "Middlewares/**",
-                "AZURE_RTOS/**"
+                "AZURE_RTOS/**",
+                "FileX/**",
+                "USBPD/**",
+                "USBX/**"
             ],
             "defines": [
                 "DEBUG",
+                "STM32U5",
                 "STM32U5A5xx",
                 "USE_HAL_DRIVER",
                 "USE_FULL_LL_DRIVER",
+                "TRACE_LEVEL=0",
                 "TX_SINGLE_MODE_NON_SECURE=1",
                 "TX_INCLUDE_USER_DEFINE_FILE",
-                "FX_INCLUDE_USER_DEFINE_FILE",
                 "UX_INCLUDE_USER_DEFINE_FILE",
-                "TRACE_LEVEL=5"
+                "FX_INCLUDE_USER_DEFINE_FILE",
+                "USBPD_PORT_COUNT=1",
+                "USBPD_THREADX",
+                "USBPDCORE_LIB_PD3_CONFIG_MINSRC",
+                //"USBPDCORE_LIB_PD3_FULL",
+                "_SRC"
             ]
         }
     ]

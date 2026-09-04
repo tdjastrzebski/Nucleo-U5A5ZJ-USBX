@@ -7,7 +7,7 @@
   ******************************************************************************
    * @attention
   *
-  * Copyright (c) 2023 STMicroelectronics.
+  * Copyright (c) 2026 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -22,7 +22,7 @@
 #ifndef APP_AZURE_RTOS_H
 #define APP_AZURE_RTOS_H
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
@@ -32,7 +32,8 @@
 #include "app_azure_rtos_config.h"
 #include "app_filex.h"
 
-#include "app_usbx_host.h"
+#include "app_usbx.h"
+#include "usbpd.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -69,4 +70,3 @@
 }
 #endif
 #endif /* APP_AZURE_RTOS_H */
-

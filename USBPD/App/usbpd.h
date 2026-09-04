@@ -1,12 +1,13 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file           : usbxh_platform.h
-  * @brief          : Header for usbh_platform.c file.
+  * @file    app/usbpd.h.h
+  * @author  MCD Application Team
+  * @brief   This file contains the device define.
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2023 STMicroelectronics.
+  * Copyright (c) 2026 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -18,25 +19,43 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __USBH_PLATFORM_H__
-#define __USBH_PLATFORM_H__
-
+#ifndef __usbpd_H
+#define __usbpd_H
 #ifdef __cplusplus
  extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "app_usbx_host.h"
-#include "stm32u5xx_hal.h"
-/* USER CODE BEGIN INCLUDE */
+#include "usbpd_core.h"
+#include "usbpd_dpm_core.h"
+#include "usbpd_dpm_conf.h"
+#include "usbpd_hw_if.h"
 
-/* USER CODE END INCLUDE */
+/* USER CODE BEGIN 0 */
+/* USER CODE END 0 */
 
-void USBH_DriverVBUS(uint8_t state);
+/* Global variables ---------------------------------------------------------*/
+
+/* USER CODE BEGIN 1 */
+/* USER CODE END 1 */
+
+unsigned int USBPD_PreInitOs(void);
+
+/* USBPD init function */
+unsigned int    MX_USBPD_Init(void *memory_ptr);
+
+/* USER CODE BEGIN 2 */
+/* USER CODE END 2 */
 
 #ifdef __cplusplus
 }
 #endif
+#endif /*__usbpd_H */
 
-#endif /* __USBH_PLATFORM_H__ */
+/**
+  * @}
+  */
 
+/**
+  * @}
+  */

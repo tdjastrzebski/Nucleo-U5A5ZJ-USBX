@@ -60,13 +60,15 @@
                 "--base-address",
                 "0x08000000",
                 "--target",
-                "STM32U5A5ZJTxQ",
+                "stm32u5a5zjtxq",
                 "--connect",
                 "halt",
                 "--frequency",
                 "24m",
                 "--uid",
-                "003500463232510239353236"
+                "003500463232510239353236",
+                "--pack",
+                "./../Keil.STM32U5xx_DFP.3.0.0.pack"
             ],
             "options": {
                 "cwd": "${workspaceRoot}"
