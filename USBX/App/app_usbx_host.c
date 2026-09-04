@@ -133,6 +133,7 @@ static VOID app_ux_host_thread_entry(ULONG thread_input)
 			// USBSTACK STOP/START - ignore
 		} else if (HAS_ALL_FLAGS(txFlags, 0x01)) {
 			// USBSTACK_START
+      MX_USB_OTG_HS_HCD_Init();
 			UINT result1 = MX_USBX_Host_Stack_Init();
 
 			if (result1 == UX_SUCCESS) {
@@ -164,7 +165,7 @@ static VOID app_ux_host_thread_entry(ULONG thread_input)
 					my_printf(GREEN("USBX Host stopped\n"));
 				}
 			}
-
+      
 			trace_HCD(1);
 		}
 
