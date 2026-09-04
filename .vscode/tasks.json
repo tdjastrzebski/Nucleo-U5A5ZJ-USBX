@@ -5,14 +5,15 @@
     "tasks": [
         {
             // requires: npm install cppbuild -g
-            "label": "Build++",
+            "label": "Build++ (debug)",
             "type": "shell",
             "command": "cppbuild",
             "args": [
                 "gcc",
                 "debug",
                 "-w",
-                "-d"
+                "-d",
+                "-j 12"
             ],
             "presentation": {
                 "clear": true
@@ -26,17 +27,47 @@
             }
         },
         {
-            // Requires ST-LINK Utility (https://github.com/stlink-org/stlink)
-            "label": "Deploy (ST-Link)",
+            // requires: npm install cppbuild -g
+            "label": "Build++ (release)",
             "type": "shell",
-            "command": "st-flash",
+            "command": "cppbuild",
             "args": [
-                "--reset",
-                //"--debug",
-                "--opt",
-                "write",
-                "'BUILD/debug/${workspaceRootFolderName}.bin'",
+                "gcc",
+                "release",
+                "-w",
+                "-d",
+                "-j 12"
+            ],
+            "presentation": {
+                "clear": true
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Deploy (pyOCD debug)",
+            "type": "shell",
+            "command": "pyocd",
+            "args": [
+                "flash",
+                "BUILD/debug/${workspaceRootFolderName}.bin",
+                "--base-address",
                 "0x08000000",
+                "--target",
+                "STM32U5A9ZJTxQ",
+                "--connect",
+                "halt",
+                "--frequency",
+                "24m",
+                "--uid",
+                "003500463232510239353236",
+                "--pack",
+                "./../Keil.STM32U5xx_DFP.3.0.0.pack"
             ],
             "options": {
                 "cwd": "${workspaceRoot}"
@@ -51,22 +82,24 @@
             },
         },
         {
-            "label": "Deploy (pyOCD debug)",
+            "label": "Deploy (pyOCD release)",
             "type": "shell",
             "command": "pyocd",
             "args": [
                 "flash",
-                "BUILD/debug/${workspaceRootFolderName}.bin",
+                "BUILD/release/${workspaceRootFolderName}.bin",
                 "--base-address",
                 "0x08000000",
                 "--target",
-                "stm32u5a5zjtxq",
+                "STM32U5A9ZJTxQ",
                 "--connect",
                 "halt",
                 "--frequency",
                 "24m",
                 "--uid",
-                "003500463232510239353236"
+                "003500463232510239353236",
+                "--pack",
+                "./../Keil.STM32U5xx_DFP.3.0.0.pack"
             ],
             "options": {
                 "cwd": "${workspaceRoot}"
@@ -106,7 +139,7 @@
                 },
                 "background": {
                     "activeOnStart": true,
-                    "beginsPattern": "^xPack OpenOCD x86_64 Open On-Chip Debugger*",
+                    "beginsPattern": "^Open On-Chip Debugger*",
                     "endsPattern": "^shutdown command invoked",
                 }
             },
@@ -116,12 +149,68 @@
             },
         },
         {
-            "label": "Clean",
+            "label": "Deploy (OpenOCD release)",
+            "type": "shell",
+            "command": "openocd",
+            "args": [
+                "-s",
+                "${env:OpenOCD}/scripts",
+                "-f",
+                "STM32U5x_STLink.cfg",
+                "-c program \"BUILD/release/${workspaceRootFolderName}.elf\" verify reset exit"
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": {
+                "pattern": {
+                    "regexp": "^(Info|Warn|Error) : (.*)$",
+                    "severity": 1,
+                    "message": 2,
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^Open On-Chip Debugger*",
+                    "endsPattern": "^shutdown command invoked",
+                }
+            },
+            "presentation": {
+                "clear": true,
+                //"close": true // causes terminal to close upon termination
+            },
+        },
+        {
+            "label": "Clean debug",
             "type": "shell",
             "command": "rm",
             "args": [
                 "-rf",
-                "BUILD"
+                "BUILD/debug"
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "clear": true,
+                "close": true // causes terminal to close upon termination
+            },
+        },
+        {
+            "label": "Clean release",
+            "type": "shell",
+            "command": "rm",
+            "args": [
+                "-rf",
+                "BUILD/release"
             ],
             "options": {
                 "cwd": "${workspaceRoot}"
@@ -158,11 +247,23 @@
             },
         },
         {
-            "label": "Build and Deploy (pyOCD debug)",
+            "label": "Build and Deploy (pyOCD) DEBUG",
             "dependsOrder": "sequence",
             "dependsOn": [
-                "Build++",
+                "Build++ (debug)",
                 "Deploy (pyOCD debug)",
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+        },
+        {
+            "label": "Build and Deploy (pyOCD) RELEASE",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "Build++ (release)",
+                "Deploy (pyOCD release)",
             ],
             "group": {
                 "kind": "build",

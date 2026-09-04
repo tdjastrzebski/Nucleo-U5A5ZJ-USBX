@@ -442,11 +442,11 @@ static void _writeNewFile() {
 					my_printf("!! Read Process Fail !! \n");
 				}
 			} else {
-				my_printf("!! Write Process Fail !! ");
+				my_printf("!! Write Process Fail !! \n");
 			}
 
 		} else {
-			my_printf(" !! Could Not Create TEST.TXT File !! ");
+			my_printf(" !! Could Not Create TEST.TXT File !! \n");
 		}
 	} else {
 		tx_thread_sleep(MS_TO_TICK(10));
