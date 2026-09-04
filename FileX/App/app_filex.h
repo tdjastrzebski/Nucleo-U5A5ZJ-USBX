@@ -8,7 +8,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2026 STMicroelectronics.
+  * Copyright (c) 2023 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -30,7 +30,7 @@ extern "C" {
 #include "fx_api.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "ux_api.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -52,7 +52,9 @@ extern "C" {
 UINT MX_FileX_Init(VOID *memory_ptr);
 
 /* USER CODE BEGIN EFP */
-
+UINT  App_File_Create(FX_MEDIA *fx_media);
+UINT  App_File_Write(FX_MEDIA *fx_media);
+UINT  App_File_Read(FX_MEDIA *fx_media);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/

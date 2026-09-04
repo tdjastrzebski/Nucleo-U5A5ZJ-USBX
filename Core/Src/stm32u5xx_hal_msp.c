@@ -284,7 +284,7 @@ void HAL_HCD_MspInit(HCD_HandleTypeDef* hhcd)
     /*OTG_HS PHY enable*/
       HAL_SYSCFG_EnableOTGPHY(SYSCFG_OTG_HS_PHY_ENABLE);
     /* USB_OTG_HS interrupt Init */
-    HAL_NVIC_SetPriority(OTG_HS_IRQn, 14, 0);
+    HAL_NVIC_SetPriority(OTG_HS_IRQn, 10, 0);
     HAL_NVIC_EnableIRQ(OTG_HS_IRQn);
     /* USER CODE BEGIN USB_OTG_HS_MspInit 1 */
 

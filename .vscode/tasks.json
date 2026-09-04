@@ -66,9 +66,7 @@
                 "--frequency",
                 "24m",
                 "--uid",
-                "003500463232510239353236",
-                "--pack",
-                "./../Keil.STM32U5xx_DFP.3.0.0.pack"
+                "003500463232510239353236"
             ],
             "options": {
                 "cwd": "${workspaceRoot}"

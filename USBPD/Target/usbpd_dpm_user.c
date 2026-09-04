@@ -34,7 +34,7 @@
 #include "stdio.h"
 #endif /* _TRACE */
 /* USER CODE BEGIN Includes */
-
+#include "tx_api.h"
 /* USER CODE END Includes */
 
 /** @addtogroup STM32_USBPD_APPLICATION
@@ -104,7 +104,7 @@
   */
 
 /* USER CODE BEGIN Private_Variables */
-
+extern TX_EVENT_FLAGS_GROUP ux_app_EventFlags;
 /* USER CODE END Private_Variables */
 /**
   * @}
@@ -263,10 +263,12 @@ void USBPD_DPM_Notification(uint8_t PortNum, USBPD_NotifyEventValue_TypeDef Even
 //      break;
 //    case USBPD_NOTIFY_PE_DISABLED :
 //      break;
-//    case USBPD_NOTIFY_USBSTACK_START:
-//      break;
-//    case USBPD_NOTIFY_USBSTACK_STOP:
-//      break;
+    case USBPD_NOTIFY_USBSTACK_START:
+      tx_event_flags_set(&ux_app_EventFlags, 0x01, TX_OR);
+      break;
+    case USBPD_NOTIFY_USBSTACK_STOP:
+      tx_event_flags_set(&ux_app_EventFlags, 0x02, TX_OR);
+      break;
 //    case USBPD_NOTIFY_DATAROLESWAP_DFP :
 //      break;
 //    case USBPD_NOTIFY_DATAROLESWAP_UFP :
