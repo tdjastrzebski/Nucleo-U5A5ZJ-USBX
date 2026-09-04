@@ -1,5 +1,5 @@
 # Nucleo-U5A5ZJ-Q (STM32U5A5), USBX, USB-C host, reading and writing pen drive files
-## [Nucleo-U5A5ZJ-Q](https://www.st.com/en/evaluation-tools/nucleo-u5a5zj-q.html) configured as USB-C Host with MSC (mass storage) support and UCPD suppprt
+## [Nucleo-U5A5ZJ-Q](https://www.st.com/en/evaluation-tools/nucleo-u5a5zj-q.html) configured as USB-C Host with MSC (mass storage) support and UCPD support
 > Note: to provide USB-C power, onboard undocumented jumpers SB8-SB10 must be closed to disable TCPP01-M12 chip which is not capable of sorcing current.
 > In addition, 2nd JP6 jumper in 5V_USB_C position is required - see image below.
 
