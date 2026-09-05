@@ -242,7 +242,8 @@ void HAL_HCD_MspInit(HCD_HandleTypeDef* hhcd)
     /* USER CODE BEGIN USB_OTG_HS_MspInit 0 */
 
     __HAL_RCC_SYSCFG_CLK_ENABLE();
-
+    HAL_SYSCFG_SetOTGPHYDisconnectThreshold(SYSCFG_OTG_HS_PHY_DISCONNECT_5_9PERCENT);
+	  HAL_SYSCFG_SetOTGPHYSquelchThreshold(SYSCFG_OTG_HS_PHY_SQUELCH_15PERCENT);
     /* USER CODE END USB_OTG_HS_MspInit 0 */
 
   /** Initializes the peripherals clock
