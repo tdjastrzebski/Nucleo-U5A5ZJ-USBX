@@ -204,9 +204,9 @@ UINT ux_host_event_callback(ULONG event, UX_HOST_CLASS *current_class, VOID *cur
 				/* Get current Storage Instance */
 				storage = (UX_HOST_CLASS_STORAGE*)current_instance;
 
-				my_printf("\nUSB Mass Storage Device Plugged");
-				my_printf("PID: %#x ", (UINT)storage->ux_host_class_storage_device->ux_device_descriptor.idProduct);
-				my_printf("VID: %#x ", (UINT)storage->ux_host_class_storage_device->ux_device_descriptor.idVendor);
+				my_printf("USB Mass Storage Device Plugged\n");
+				my_printf("PID: %#x \n", (UINT)storage->ux_host_class_storage_device->ux_device_descriptor.idProduct);
+				my_printf("VID: %#x \n", (UINT)storage->ux_host_class_storage_device->ux_device_descriptor.idVendor);
 
 				/* Get the storage media */
 				storage_media = (UX_HOST_CLASS_STORAGE_MEDIA*)current_class->ux_host_class_media;
@@ -239,7 +239,7 @@ UINT ux_host_event_callback(ULONG event, UX_HOST_CLASS *current_class, VOID *cur
 			storage_media = UX_NULL;
 			media = UX_NULL;
 
-			my_printf("\nUSB Mass Storage Device Unplugged");
+			my_printf("USB Mass Storage Device Unplugged\n");
 		}
       /* USER CODE END UX_DEVICE_REMOVAL */
 
@@ -418,40 +418,39 @@ static void _writeNewFile() {
 	/* Start file operations once the media is connected */
 	if (media != NULL) {
 		/* Start File operations */
-		my_printf("\n*** Start Files operations ***\n");
+		my_printf("start file operation\n");
 
 		/* Create a file and check status */
 		if (App_File_Create(media) == UX_SUCCESS) {
-			my_printf("File TEST.TXT Created \n");
+			my_printf("file TEST.TXT created\n");
 
 			/* Start write File Operation */
-			my_printf("Write Process ...... \n");
+			my_printf("write process ......\n");
 
 			/* Check status */
 			if (App_File_Write(media) == UX_SUCCESS) {
-				my_printf("Write Process Success \n");
+				my_printf("write process succeeded\n");
 
 				/* Start Read File Operation and comparison operation */
-				my_printf("Read Process  ...... \n");
+				my_printf("read process  ......\n");
 
 				/* Check Read Operation */
 				if (App_File_Read(media) == UX_SUCCESS) {
-					my_printf("Read Process Success  \n");
-					my_printf("File Closed \n");
-					my_printf("*** End Files operations ***\n");
+					my_printf("read process succeeded\n");
+					my_printf("file closed\n");
+					my_printf("file operation completed\n");
 				} else {
-					my_printf("!! Read Process Fail !! \n");
+					my_printf(RED("read process failed\n"));
 				}
 			} else {
-				my_printf("!! Write Process Fail !! \n");
+				my_printf(RED("write process failed\n"));
 			}
 
 		} else {
-			my_printf(" !! Could Not Create TEST.TXT File !! \n");
+			my_printf(RED("could not create TEST.TXT file\n"));
 		}
 	} else {
 		tx_thread_sleep(MS_TO_TICK(10));
 	}
 }
-
 /* USER CODE END 1 */
