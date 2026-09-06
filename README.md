@@ -15,8 +15,10 @@ The board is configured as a **USB-C host** with USB Mass Storage Class (MSC) an
 The following macros must be configured manually:
 
 ```c
-UX_APP_MEM_POOL_SIZE    40*1024 // app_azure_rtos_config.h
-USBX_MEMORY_STACK_SIZE  24*1024 // app_usbx.h
+UX_APP_MEM_POOL_SIZE          40*1024 // app_azure_rtos_config.h
+FX_APP_MEM_POOL_SIZE           2*1024 // app_azure_rtos_config.h
+USBX_MEMORY_STACK_SIZE        24*1024 // app_usbx.h
+UX_HOST_APP_THREAD_STACK_SIZE  2*1024 // app_usbx_host.h
 ```
 
 > **Note:** Make sure the above macros are defined correctly. CubeMX 6.18 has a bug that may prevent these settings from being persisted, which can result in a `USBX App init error`.

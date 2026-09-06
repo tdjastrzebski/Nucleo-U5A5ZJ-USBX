@@ -48,6 +48,7 @@
 static TX_THREAD ux_host_app_thread;
 
 /* USER CODE BEGIN PV */
+static TX_THREAD _writeFile_thread;
 TX_EVENT_FLAGS_GROUP ux_app_EventFlags;
 UX_HOST_CLASS_STORAGE* storage;
 UX_HOST_CLASS_STORAGE_MEDIA* storage_media;
@@ -62,7 +63,7 @@ static VOID ux_host_error_callback(UINT system_level, UINT system_context, UINT 
 extern HCD_HandleTypeDef hhcd_USB_OTG_HS;
 
 /* USER CODE BEGIN PFP */
-static void _writeNewFile();
+static void _writeFile_thread_entry(ULONG thread_input);
 /* USER CODE END PFP */
 
 /**
@@ -108,6 +109,18 @@ UINT MX_USBX_Host_Init(VOID *memory_ptr)
 	if (tx_event_flags_create(&ux_app_EventFlags, "Event Flag") != TX_SUCCESS) {
 		return TX_GROUP_ERROR;
 	}
+
+  if (tx_byte_allocate(byte_pool, (VOID **) &pointer, UX_HOST_APP_THREAD_STACK_SIZE, TX_NO_WAIT) != TX_SUCCESS)
+  {
+		return TX_POOL_ERROR;
+  }
+  
+  if (tx_thread_create(&_writeFile_thread, "WriteFile thread", _writeFile_thread_entry, 0, pointer,
+    // important: set the thread priority and preemption threshold to 30 to prevent the thread from starting immediately
+    UX_HOST_APP_THREAD_STACK_SIZE, 30, 30, TX_NO_TIME_SLICE, TX_DONT_START) != TX_SUCCESS)
+  {
+		return TX_THREAD_ERROR;
+  }
   /* USER CODE END MX_USBX_Host_Init 2 */
 
   return ret;
@@ -221,7 +234,7 @@ UINT ux_host_event_callback(ULONG event, UX_HOST_CLASS *current_class, VOID *cur
 				/* Check the storage class state */
 				if (storage->ux_host_class_storage_state == UX_HOST_CLASS_INSTANCE_LIVE) {
 					/* Set STORAGE_MEDIA flag */
-					_writeNewFile();
+					tx_thread_resume(&_writeFile_thread);
 				}
 			}
 		}
@@ -414,7 +427,7 @@ UINT MX_USBX_Host_Stack_DeInit(void)
   return ret ;
 }
 /* USER CODE BEGIN 1 */
-static void _writeNewFile() {
+static void _writeFile_thread_entry(ULONG thread_input) {
 	/* Start file operations once the media is connected */
 	if (media != NULL) {
 		/* Start File operations */
@@ -445,12 +458,10 @@ static void _writeNewFile() {
 			} else {
 				my_printf(RED("write process failed\n"));
 			}
-
 		} else {
 			my_printf(RED("could not create TEST.TXT file\n"));
 		}
-	} else {
-		tx_thread_sleep(MS_TO_TICK(10));
 	}
+  tx_thread_suspend(&_writeFile_thread);
 }
 /* USER CODE END 1 */
