@@ -24,6 +24,8 @@ UX_HOST_APP_THREAD_STACK_SIZE  2*1024 // app_usbx_host.h
 > **Note:** Make sure the above macros are defined correctly. CubeMX 6.18 has a bug that may prevent these settings from being persisted, which can result in a `USBX App init error`.
 > See this bug report: [CubeMX does not persist critical STM32U5 USBX and FILEX settings](https://community.st.com/stm32cubemx-mcus-29/cubemx-does-not-persist-critical-stm32u5-usbx-and-filex-settings-168255)
 
+> Known issues: although exFAT is enabled, only FAT32 partition is supported
+
 ![Write Process Succeeded](ScreenShot-Result.png)
 
 ![Jumpers SB8-SB10](IMG_E5587.JPG)
