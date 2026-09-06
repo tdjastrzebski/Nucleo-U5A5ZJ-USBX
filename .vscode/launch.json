@@ -9,7 +9,7 @@
             "showDevDebugOutput": "vscode",
             "cwd": "${workspaceRoot}",
             "executable": "BUILD/debug/${workspaceRootFolderName}.elf",
-        "svdFile": "    x.svd",
+        "svdFile": "STM32U5A5.svd",
             "runToEntryPoint": "main",
             "device": "STM32U5A5ZJTxQ",
             "searchDir": ["${env:OpenOCD}/scripts"],
@@ -42,7 +42,7 @@
             "executable": "BUILD/debug/${workspaceRootFolderName}.elf",
             "device": "H",
             "targetId": "STM32U5A5ZJTxQ",
-            "svdFile": "STM32U5Gx.svd",
+            "svdFile": "STM32U5A5.svd",
             "runToEntryPoint": "main",
             "interface": "swd",
             "serverArgs": [
