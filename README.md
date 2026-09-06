@@ -16,15 +16,16 @@ The following macros must be configured manually:
 
 ```c
 UX_APP_MEM_POOL_SIZE          40*1024 // app_azure_rtos_config.h
-FX_APP_MEM_POOL_SIZE           2*1024 // app_azure_rtos_config.h
+FX_APP_MEM_POOL_SIZE           3*1024 // app_azure_rtos_config.h
 USBX_MEMORY_STACK_SIZE        24*1024 // app_usbx.h
-UX_HOST_APP_THREAD_STACK_SIZE  2*1024 // app_usbx_host.h
+UX_HOST_APP_THREAD_STACK_SIZE  3*1024 // app_usbx_host.h
 ```
 
 > **Note:** Make sure the above macros are defined correctly. CubeMX 6.18 has a bug that may prevent these settings from being persisted, which can result in a `USBX App init error`.
 > See this bug report: [CubeMX does not persist critical STM32U5 USBX and FILEX settings](https://community.st.com/stm32cubemx-mcus-29/cubemx-does-not-persist-critical-stm32u5-usbx-and-filex-settings-168255)
 
-> Known issues: although exFAT is enabled, only FAT32 partition is supported
+
+> Known issue: Some pendrives do not work correctly. Perhaps they use unsupported communication features. (commands?)
 
 ![Write Process Succeeded](ScreenShot-Result.png)
 
