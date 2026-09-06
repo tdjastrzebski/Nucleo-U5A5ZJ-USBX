@@ -1,6 +1,6 @@
 # Nucleo-U5A5ZJ-Q (STM32U5A5) USBX USB-C Host Demo
 
-USBX demo for the **Nucleo-U5A5ZJ-Q (STM32U5A5)** board configured as a **USB-C host**, demonstrating USB Mass Storage Class (MSC) support and file read/write operations on a USB flash drive, with UCPD support.
+USBX demo for the **Nucleo-U5A5ZJ-Q (STM32U5A5)** board configured as a **USB-C host**, demonstrating USB Mass Storage Class (MSC) support and file read/write operations on a USB flash drive, with UCPD and exFAT partition support.
 
 ## Nucleo-U5A5ZJ-Q Board Configuration
 
