@@ -23,7 +23,7 @@ UX_HOST_APP_THREAD_STACK_SIZE  2*1024 // app_usbx_host.h
 
 > **Note:** Make sure the above macros are defined correctly. CubeMX 6.18 has a bug that may prevent these settings from being persisted, which can result in a `USBX App init error`.
 
-![Write Process Succeeded](Screenshot_2024-01-21.png)
+![Write Process Succeeded](ScreenShot-Result.png)
 
 ![Jumpers SB8-SB10](IMG_E5587.JPG)
 
