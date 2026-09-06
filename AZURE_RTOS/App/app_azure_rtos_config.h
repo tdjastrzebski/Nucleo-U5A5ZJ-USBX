@@ -45,9 +45,9 @@ extern "C" {
 
 #define TX_APP_MEM_POOL_SIZE                     1024
 
-#define FX_APP_MEM_POOL_SIZE                     2*1024
+#define FX_APP_MEM_POOL_SIZE                     2048
 
-#define UX_APP_MEM_POOL_SIZE                     40*1024
+#define UX_APP_MEM_POOL_SIZE                     40960
 
 #define USBPD_DEVICE_APP_MEM_POOL_SIZE              5000
 
