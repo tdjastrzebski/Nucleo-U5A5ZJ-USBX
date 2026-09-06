@@ -4,8 +4,8 @@
         {
             "name": "gcc",
             "intelliSenseMode": "gcc-arm",
-            "cStandard": "c17",
-            "cppStandard": "c++17",
+            "cStandard": "c23",
+            "cppStandard": "c++23",
             "compilerPath": "${env:MBED_GCC_ARM_PATH}/arm-none-eabi-g++",
             "forcedInclude": [
                 //"Drivers/CMSIS/Device/ST/STM32U5xx/Include/stm32u5xx.h"
