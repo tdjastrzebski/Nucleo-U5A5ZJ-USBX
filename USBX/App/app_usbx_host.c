@@ -429,39 +429,41 @@ UINT MX_USBX_Host_Stack_DeInit(void)
 /* USER CODE BEGIN 1 */
 static void _writeFile_thread_entry(ULONG thread_input) {
 	/* Start file operations once the media is connected */
-	if (media != NULL) {
-		/* Start File operations */
-		my_printf("start file operation\n");
+	while (true) {  
+    if (media != NULL) {
+      /* Start File operations */
+      my_printf("start file operation\n");
 
-		/* Create a file and check status */
-		if (App_File_Create(media) == UX_SUCCESS) {
-			my_printf("file TEST.TXT created\n");
+      /* Create a file and check status */
+      if (App_File_Create(media) == UX_SUCCESS) {
+        my_printf("file TEST.TXT created\n");
 
-			/* Start write File Operation */
-			my_printf("write process ......\n");
+        /* Start write File Operation */
+        my_printf("write process ......\n");
 
-			/* Check status */
-			if (App_File_Write(media) == UX_SUCCESS) {
-				my_printf("write process succeeded\n");
+        /* Check status */
+        if (App_File_Write(media) == UX_SUCCESS) {
+          my_printf("write process succeeded\n");
 
-				/* Start Read File Operation and comparison operation */
-				my_printf("read process  ......\n");
+          /* Start Read File Operation and comparison operation */
+          my_printf("read process  ......\n");
 
-				/* Check Read Operation */
-				if (App_File_Read(media) == UX_SUCCESS) {
-					my_printf("read process succeeded\n");
-					my_printf("file closed\n");
-					my_printf("file operation completed\n");
-				} else {
-					my_printf(RED("read process failed\n"));
-				}
-			} else {
-				my_printf(RED("write process failed\n"));
-			}
-		} else {
-			my_printf(RED("could not create TEST.TXT file\n"));
-		}
-	}
-  tx_thread_suspend(&_writeFile_thread);
+          /* Check Read Operation */
+          if (App_File_Read(media) == UX_SUCCESS) {
+            my_printf("read process succeeded\n");
+            my_printf("file closed\n");
+            my_printf("file operation completed\n");
+          } else {
+            my_printf(RED("read process failed\n"));
+          }
+        } else {
+          my_printf(RED("write process failed\n"));
+        }
+      } else {
+        my_printf(RED("could not create TEST.TXT file\n"));
+      }
+    }
+    tx_thread_suspend(&_writeFile_thread);
+  }
 }
 /* USER CODE END 1 */
