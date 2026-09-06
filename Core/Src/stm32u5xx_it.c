@@ -35,7 +35,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define ERR(msg) B_RED_U(msg)
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -96,40 +95,40 @@ void HardFault_Handler(void)
   uint32_t ABFSR = *(uint32_t *)0xE000EFA8;
   uint32_t HFSR  = *(uint32_t *)0xE000ED2C;
   // see: [How to debug a HardFault on an ARM Cortex-M MCU](https://interrupt.memfault.com/blog/cortex-m-hardfault-debug)
-  my_printf(ERR("hard fault UFSR: 0x%04X, BFSR: 0x%02X, MMFSR: 0x%02X, ABFSR: 0x%08lX, HFSR: 0x%08lX") "\n", UFSR, BFSR, MMFSR, ABFSR, HFSR);
+  my_printf(MSGERR("hard fault UFSR: 0x%04X, BFSR: 0x%02X, MMFSR: 0x%02X, ABFSR: 0x%08lX, HFSR: 0x%08lX") "\n", UFSR, BFSR, MMFSR, ABFSR, HFSR);
   switch (UFSR)
   {
   case 1:
-    my_printf(ERR("UNDEFINSTR - undefined instruction") "\n");
+    my_printf(MSGERR("UNDEFINSTR - undefined instruction") "\n");
     break;
   case 2:
-    my_printf(ERR("INVSTATE - processor has tried to execute an instruction with an invalid Execution Program Status Register (EPSR) value") "\n");
+    my_printf(MSGERR("INVSTATE - processor has tried to execute an instruction with an invalid Execution Program Status Register (EPSR) value") "\n");
     break;
   case 4:
-    my_printf(ERR("INVPC - integrity check failure on EXC_RETURN") "\n");
+    my_printf(MSGERR("INVPC - integrity check failure on EXC_RETURN") "\n");
     break;
   case 8:
-    my_printf(ERR("NOCP - Cortex-M coprocessor instruction was issued but the coprocessor was disabled or not present") "\n");
+    my_printf(MSGERR("NOCP - Cortex-M coprocessor instruction was issued but the coprocessor was disabled or not present") "\n");
     break;
   case 256:
-    my_printf(ERR("UNALIGNED - an unaligned access operation occurred") "\n");
+    my_printf(MSGERR("UNALIGNED - an unaligned access operation occurred") "\n");
   case 512:
-    my_printf(ERR("DIVBYZERO - divide instruction was executed where the denominator was zero") "\n");
+    my_printf(MSGERR("DIVBYZERO - divide instruction was executed where the denominator was zero") "\n");
     break;
   default:
     break;
   }
   if (BFSR & 0x80) {
-    my_printf(ERR("BFAR: 0x%08lX") "\n", *(uint32_t *)0xE000ED38);
+    my_printf(MSGERR("BFAR: 0x%08lX") "\n", *(uint32_t *)0xE000ED38);
   }
   /* USER CODE END HardFault_IRQn 0 */
   while (1)
   {
     /* USER CODE BEGIN W1_HardFault_IRQn 0 */
-    #if defined(STATUS_LED_GPIO_Port)
+    #if defined(LED_RED_GPIO_Port)
 		const uint32_t pattern = 0xa000a000;
 		static uint32_t shift = 0;
-		HAL_GPIO_WritePin(STATUS_LED_GPIO_Port, STATUS_LED_Pin, (pattern >> shift) & 0x1 ? GPIO_PIN_SET : GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, (pattern >> shift) & 0x1 ? GPIO_PIN_SET : GPIO_PIN_RESET);
 		shift++;
 		shift = shift % 32;
 		HAL_Delay(200);
