@@ -20,6 +20,8 @@ UX_HOST_APP_THREAD_STACK_SIZE  3*1024 // app_usbx_host.h
 
 > Known issue: Some pendrives do not work correctly. Perhaps they use unsupported communication features. (commands?)
 
+#### This demo is partially based on the [STM32CubeN6 Ux_Host_MSC example](https://github.com/STMicroelectronics/STM32CubeN6/tree/main/Projects/STM32N6570-DK/Applications/USBX/Ux_Host_MSC) provided by STMicroelectronics, with modifications and adaptations made for this project.
+
 ![Write Process Succeeded](ScreenShot-Result.png)
 
 ![Jumpers SB8-SB10](IMG_E5587.JPG)
@@ -151,5 +153,3 @@ Otherwise, VS Code may attempt to execute NPM package commands as PowerShell scr
 * [PM0264](https://www.st.com/resource/en/programming_manual/pm0264-stm32-cortexm33-mcus-programming-manual-stmicroelectronics.pdf) — STM32 Cortex-M33 programming manual
 * [UM2861](https://www.st.com/resource/en/user_manual/um2861-stm32u5-nucleo144-board-mb1549-stmicroelectronics.pdf) — STM32U5 Nucleo-144 board (MB1549)
 * [Nucleo-U5A5ZJ-Q board schematic 2.0](https://www.st.com/content/ccc/resource/technical/layouts_and_diagrams/schematic_pack/group1/f1/6c/26/bc/a0/a0/48/d7/MB1549-U575ZIQ-C02_Schematic/files/MB1549-U575ZIQ-C02_Schematic.PDF) 
-
-#### This demo is based on the [STM32CubeN6 Ux_Host_MSC example](https://github.com/STMicroelectronics/STM32CubeN6/tree/main/Projects/STM32N6570-DK/Applications/USBX/Ux_Host_MSC) provided by STMicroelectronics, with modifications and adaptations made for this project.
